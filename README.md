@@ -4,6 +4,7 @@ A google map style search box which includes a side panel slider control.
 
 * fix some styles
 * with leaflet-geosearch's osm provider supports searching 
+* make it more modernize and modularize
 
 base on https://github.com/8to5Developer/leaflet-custom-searchbox
 
