@@ -94,7 +94,6 @@ L.Control.SearchBox = L.Control.extend({
         return container;
     },
     onAdd: function (map) {
-        console.log(map)
         var container = L.DomUtil.create('div');
         container.id = "controlcontainer";
         var headerTitle = this._sideBarHeaderTitle;

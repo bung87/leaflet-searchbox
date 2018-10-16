@@ -60,7 +60,7 @@
 .searchbox-menubutton::before {
     content: '';
     display: block;
-    background-image: url('image/ic_dehaze_black_24dp@2x.png');
+    background-image: url('images/ic_dehaze_black_24dp@2x.png');
     background-size: 24px;
     background-position: 0 0;
     height: 24px;
@@ -105,7 +105,7 @@
     display: block;
     width: 24px;
     height: 24px;
-    background: url('image/ic_search_black_24dp@2x.png');
+    background: url('images/ic_search_black_24dp@2x.png');
     background-size: 24px;
     opacity:.5
 }
@@ -171,7 +171,7 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
 
 .panel-close-button
 {
-    background: no-repeat url('image/ic_navigate_before_black_24dp@2x.png') ;
+    background: no-repeat url('images/ic_navigate_before_black_24dp@2x.png') ;
     background-size: 24px;    
     height:24px;
     width:24px;
@@ -235,36 +235,36 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
 
 .icon-folder
 {
-    background:url('image/ic_folder_black_24dp@2x.png');
+    background:url('images/ic_folder_black_24dp@2x.png');
     background-size: 24px;
 }
 
 
 .icon-cloudy
 {
-    background:url('image/ic_wb_cloudy_black_24dp@2x.png');
+    background:url('images/ic_wb_cloudy_black_24dp@2x.png');
     background-size: 24px;
 }
 
 .icon-potrait
 {
-    background:url('image/ic_portrait_black_24dp@2x.png');
+    background:url('images/ic_portrait_black_24dp@2x.png');
     background-size: 24px;
 }
 
 .icon-local-dining
 {
-    background:url('image/ic_local_dining_black_24dp@2x.png');
+    background:url('images/ic_local_dining_black_24dp@2x.png');
     background-size: 24px;
 }
 
 .icon-bike
 {
-    background:url('image/ic_directions_bike_black_24dp@2x.png');
+    background:url('images/ic_directions_bike_black_24dp@2x.png');
     background-size: 24px;
 }
 .icon-local-carwash
 {
-    background:url('image/ic_local_car_wash_black_24dp@2x.png');
+    background:url('images/ic_local_car_wash_black_24dp@2x.png');
     background-size: 24px;
 }
