@@ -95,19 +95,37 @@ L.Control.SearchBox = L.Control.extend({
     },
     _genResultList: function (result) {
         var content = '<ul class="result-list">'
-        for (var i = 0; i <result.length; i++) {
-            var item =result[i];
+        for (var i = 0; i < result.length; i++) {
+            var item = result[i];
             content += '<li class="result-list-item">';
-            content += `<a href="#">${item.label}</a>`;
+            content += `<a href="#" data-x="${item.x}" data-y="${item.y}">${item.label}</a>`;
             content += '</li>'
         }
         content += '</ul>'
         document.querySelector('.search-result').innerHTML = content
     },
+    _showSearchResult: function () {
+        let self = this;
+        document.querySelector('.search-result').style.display = 'block';
+        self._map.once('click', function a(ev) {
+            self._hideSearchResult();
+        });
+    },
+    _hideSearchResult: function () {
+        document.querySelector('.search-result').style.display = 'none';
+    },
+    _clearSearchResult: function () {
+        document.querySelector('.search-result').innerHTML = '';
+    },
     _suggest: function (query) {
         let provider = this.provider;
+        let self = this;
         provider.search({ query: query })
             .then(this._genResultList);
+
+        self._map.once('click', function a(ev) {
+            self._hideSearchResult();
+        });
     },
     onAdd: function (map) {
         this.provider = new OpenStreetMapProvider();
@@ -115,16 +133,21 @@ L.Control.SearchBox = L.Control.extend({
         container.id = "controlcontainer";
         var headerTitle = this._sideBarHeaderTitle;
         var menuItems = this._sideBarMenuItems;
-        // var searchCallBack = this._searchfunctionCallBack;
         container.appendChild(this._createControl());
         container.appendChild(this._createPanel(headerTitle, menuItems));
 
         bean.on(container, 'keyup', "#searchboxinput", (e) => {
             let value = e.target.value;
+            if (value.length === 0) {
+                this._clearSearchResult();
+            }
             if (value.length < 2) {
                 return;
             }
             this._suggest(value);
+        });
+        bean.on(container, 'click', "#searchboxinput", (e) => {
+            this._showSearchResult();
         });
 
         bean.on(container, 'click', "#searchbox-searchbutton", () => {
@@ -140,6 +163,13 @@ L.Control.SearchBox = L.Control.extend({
             var panel = document.querySelector('.panel');
             panel.style.left = '-300px';
         });
+
+        bean.on(container, 'click', '.result-list-item a', (e) => {
+            e.preventDefault();
+            // lat lng
+            map.panTo([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+            this._hideSearchResult();
+        })
 
         L.DomEvent.disableClickPropagation(container);
         return container;

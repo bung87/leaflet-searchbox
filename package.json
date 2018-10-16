@@ -35,6 +35,7 @@
     "rollup-plugin-postcss": "^1.6.2"
   },
   "scripts": {
+    "example":"parcel build examples/index.html",
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "test": "node test/test.js",
