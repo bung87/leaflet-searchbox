@@ -4,40 +4,51 @@ import pkg from './package.json';
 // import postcss from 'rollup-plugin-postcss'
 import fs from 'fs';
 import sprites from 'postcss-sprites';
+import babel from 'rollup-plugin-babel';
+
 var postcss = require('postcss');
 
 const opts = {
-    stylesheetPath: './dist',
-    spritePath: './dist/images/',
-	retina:true,
-	ratio:2
+	stylesheetPath: './dist',
+	spritePath: './dist/images/',
+	retina: true,
+	ratio: 2
 };
 
 var css = fs.readFileSync('./src/style.css', 'utf8');
 postcss([sprites(opts)])
-    .process(css, {
-        from: './src/style.css',
-        to: './dist/style.css'
-    })
-    .then(function(result) {
-        fs.writeFileSync('./dist/style.css', result.css);
-    });
+	.process(css, {
+		from: './src/style.css',
+		to: './dist/style.css'
+	})
+	.then(function (result) {
+		fs.writeFileSync('./dist/style.css', result.css);
+	});
 
 export default [
-    
+
 	// browser-friendly UMD build
 	{
 		input: 'src/index.js',
 		output: {
 			name: 'L.Control.SearchBox',
-			globals:{
-				'leaflet':'L'
+			globals: {
+				'leaflet': 'L'
 			},
 			file: pkg.browser,
 			format: 'umd'
 		},
 		external: ['leaflet'],
 		plugins: [
+			babel({
+				runtimeHelpers: true,
+				"presets": ["@babel/preset-env"],
+				"plugins": ["@babel/plugin-proposal-object-rest-spread",["fast-async", {
+					"runtimePattern": null,
+					"useRuntimeModule": true
+				  }]],
+				exclude: 'node_modules/**'
+			}),
 			resolve(), // so Rollup can find `ms`
 			commonjs() // so Rollup can convert `ms` to an ES module
 		]
@@ -53,6 +64,15 @@ export default [
 		input: 'src/index.js',
 		external: ['leaflet'],
 		plugins: [
+			babel({
+				runtimeHelpers: true,
+				"presets": ["@babel/preset-env"],
+				"plugins": ["@babel/plugin-proposal-object-rest-spread",["fast-async", {
+					"runtimePattern": null,
+					"useRuntimeModule": true
+				  }]],
+				exclude: 'node_modules/**'
+			}),
 			resolve(), // so Rollup can find `ms`
 			commonjs() // so Rollup can convert `ms` to an ES module
 		],

@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import bean from 'bean';
-
+import { OpenStreetMapProvider } from 'leaflet-geosearch/src/providers';
 
 function generateHtmlContent(menuItems) {
     var content = '<ul class="panel-list">'
@@ -79,32 +79,57 @@ L.Control.SearchBox = L.Control.extend({
 				<div id="boxcontainer" class="searchbox searchbox-shadow" >
 				     <div class="searchbox-menu-container">
 						<button aria-label="Menu" id="searchbox-menubutton" class="searchbox-menubutton"></button> 
-						<span aria-hidden="true"  style="display:none">Menu</span> </div>				
+                        <span aria-hidden="true"  style="display:none">Menu</span> 
+                    </div>				
 				    <div>
 						<input id="searchboxinput" type="text"  style="position: relative;" />
 					</div>
 					<div class="searchbox-searchbutton-container">
-							<button aria-label="search"  id="searchbox-searchbutton"  class="searchbox-searchbutton">
-							
-							</button> 
-							<span aria-hidden="true"  style="display:none;">search</span>
-				    </div>
+                        <button aria-label="search"  id="searchbox-searchbutton"  class="searchbox-searchbutton"></button> 
+                        <span aria-hidden="true"  style="display:none;">search</span>
+                    </div>
+                    <div class="search-result"></div>
                 </div>
                 `
         return container;
     },
+    _genResultList: function (result) {
+        var content = '<ul class="result-list">'
+        for (var i = 0; i <result.length; i++) {
+            var item =result[i];
+            content += '<li class="result-list-item">';
+            content += `<a href="#">${item.label}</a>`;
+            content += '</li>'
+        }
+        content += '</ul>'
+        document.querySelector('.search-result').innerHTML = content
+    },
+    _suggest: function (query) {
+        let provider = this.provider;
+        provider.search({ query: query })
+            .then(this._genResultList);
+    },
     onAdd: function (map) {
+        this.provider = new OpenStreetMapProvider();
         var container = L.DomUtil.create('div');
         container.id = "controlcontainer";
         var headerTitle = this._sideBarHeaderTitle;
         var menuItems = this._sideBarMenuItems;
-        var searchCallBack = this._searchfunctionCallBack;
-        container.appendChild(this._createControl())
-        container.appendChild(this._createPanel(headerTitle, menuItems))
+        // var searchCallBack = this._searchfunctionCallBack;
+        container.appendChild(this._createControl());
+        container.appendChild(this._createPanel(headerTitle, menuItems));
 
-        bean.on(container, 'click', "#searchbox-searchbutton", function () {
+        bean.on(container, 'keyup', "#searchboxinput", (e) => {
+            let value = e.target.value;
+            if (value.length < 2) {
+                return;
+            }
+            this._suggest(value);
+        });
+
+        bean.on(container, 'click', "#searchbox-searchbutton", () => {
             var searchkeywords = document.querySelector("#searchboxinput").value
-            searchCallBack(searchkeywords);
+            this._suggest(searchkeywords)
         });
 
         bean.on(container, 'click', "#searchbox-menubutton", function () {

@@ -215,7 +215,7 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
 
 
 
-.panel-content a,button,li:hover
+/* .panel-content a,button,li:hover
 {
     color:#777;
     cursor:pointer;
@@ -223,15 +223,15 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
     line-height:22px;
     vertical-align:top;
     
-}
-.panel-content a {
+} */
+/* .panel-content a {
     text-decoration: none ;
-}
-.panel-content a:hover,button:hover
+} */
+/* .panel-content a:hover,button:hover
 {
     color:blue;
 
-}
+} */
 
 .icon-folder
 {
@@ -267,4 +267,24 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
 {
     background:url('images/ic_local_car_wash_black_24dp@2x.png');
     background-size: 24px;
+}
+
+.search-result {
+    width: 100%;
+    background: #fff;
+    position: absolute;
+    left: 0;
+    top: 47px;
+    border-top: 1px solid #ccc;
+    z-index: -1;
+}
+.result-list-item {
+    padding: 5px 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.result-list-item:hover{
+    background:#f9f9f9;
 }

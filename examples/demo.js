@@ -1,5 +1,5 @@
 import * as L from 'leaflet';
-import SearchBox from '../src/index'
+import SearchBox from '../dist/leaflet.searchbox.esm.js'
 import '../dist/style.css';
 import 'leaflet/dist/leaflet.css';
 
