@@ -44,7 +44,8 @@ export default [
 			resolve(), // so Rollup can find `ms`
 			commonjs(), // so Rollup can convert `ms` to an ES module
 			babel({
-				include:'node_modules/leaflet-geosearch/src/**',
+				babelrc: false,
+				// include:'node_modules/leaflet-geosearch/src/**',
 				runtimeHelpers: true,
 				"presets": [
 					["@babel/preset-env", {
@@ -66,13 +67,13 @@ export default [
 					["@babel/plugin-transform-arrow-functions", { "spec": true }],
 					["@babel/plugin-transform-parameters"],
 					"@babel/plugin-proposal-object-rest-spread",
-					["@babel/plugin-transform-async-to-generator", {
-						"module": "bluebird",
-						"method": "coroutine"
-					  }]
+					// ["@babel/plugin-transform-async-to-generator", {
+					// 	"module": "bluebird",
+					// 	"method": "coroutine"
+					//   }]
 				],
 				
-				exclude: 'node_modules/**',
+				// exclude: 'node_modules/**',
 				
 			})
 		]
@@ -88,12 +89,15 @@ export default [
 		input: 'src/index.js',
 		external: ['leaflet'],
 		plugins: [
+			
 			resolve(), // so Rollup can find `ms`
 			commonjs(), // so Rollup can convert `ms` to an ES module
 			babel({
-				runtimeHelpers: true,
+				babelrc: false,
+				// runtimeHelpers: false,
 				"plugins": ["@babel/plugin-proposal-object-rest-spread"]
 			})
+			
 		],
 		output: [
 			{ file: pkg.main, format: 'cjs' },
