@@ -284,7 +284,12 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
     text-overflow: ellipsis;
     overflow: hidden;
 }
-
+.result-list-item a{
+    display:block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
 .result-list-item:hover{
     background:#f9f9f9;
 }

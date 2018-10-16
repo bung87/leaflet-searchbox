@@ -43,10 +43,10 @@ export default [
 			babel({
 				runtimeHelpers: true,
 				"presets": ["@babel/preset-env"],
-				"plugins": ["@babel/plugin-proposal-object-rest-spread",["fast-async", {
+				"plugins": ["@babel/plugin-proposal-object-rest-spread", ["fast-async", {
 					"runtimePattern": null,
-					"useRuntimeModule": true
-				  }]],
+					"useRuntimeModule": false
+				}]],
 				exclude: 'node_modules/**'
 			}),
 			resolve(), // so Rollup can find `ms`
@@ -67,10 +67,10 @@ export default [
 			babel({
 				runtimeHelpers: true,
 				"presets": ["@babel/preset-env"],
-				"plugins": ["@babel/plugin-proposal-object-rest-spread",["fast-async", {
+				"plugins": ["@babel/plugin-proposal-object-rest-spread", ["fast-async", {
 					"runtimePattern": null,
 					"useRuntimeModule": true
-				  }]],
+				}]],
 				exclude: 'node_modules/**'
 			}),
 			resolve(), // so Rollup can find `ms`

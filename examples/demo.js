@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import SearchBox from '../dist/leaflet.searchbox.esm.js'
-import '../dist/style.css';
+import '../src/style.css';
 import 'leaflet/dist/leaflet.css';
 
 function button2_click() {
