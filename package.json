@@ -27,7 +27,7 @@
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/plugin-transform-template-literals": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
-    "postcss-sprites": "^4.2.1",
+    "postcss-sprites": "github:bung87/postcss-sprites#master",
     "rollup": "^0.66.6",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
@@ -35,7 +35,7 @@
     "rollup-plugin-postcss": "^1.6.2"
   },
   "scripts": {
-    "example":"parcel build examples/index.html",
+    "example": "parcel build examples/index.html",
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "test": "node test/test.js",
