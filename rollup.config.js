@@ -33,7 +33,8 @@ export default [
 		output: {
 			name: 'L.Control.SearchBox',
 			globals: {
-				'leaflet': 'L'
+				'leaflet': 'L',
+				'bean':'bean'
 			},
 			file: pkg.browser,
 			format: 'umd'
@@ -91,7 +92,7 @@ export default [
 		plugins: [
 			
 			resolve(), // so Rollup can find `ms`
-			commonjs(), // so Rollup can convert `ms` to an ES module
+			commonjs({namedExports: { 'node_modules/bean/bean.js': ['bean' ] }}), // so Rollup can convert `ms` to an ES module
 			babel({
 				babelrc: false,
 				// runtimeHelpers: false,
