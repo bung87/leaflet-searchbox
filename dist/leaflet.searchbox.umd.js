@@ -113,7 +113,7 @@
       * MIT license
       */
     (function (name, context, definition) {
-      if (module.exports) module.exports = definition();else context[name] = definition();
+      if (module.exports) module.exports = definition(name, context);else context[name] = definition(name, context);
     })('bean', commonjsGlobal, function (name, context) {
       name = name || 'bean';
       context = context || this;

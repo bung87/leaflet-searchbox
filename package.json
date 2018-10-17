@@ -49,7 +49,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "@babel/runtime": "^7.1.2",
-    "bean": "^1.0.15",
+    "bean": "github:bung87/bean#master",
     "leaflet": "^1.3.4",
     "leaflet-geosearch": "github:bung87/leaflet-geosearch#develop"
   }
