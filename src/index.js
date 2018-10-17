@@ -1,6 +1,7 @@
 import * as L from 'leaflet';
 import bean from 'bean';
 import { OpenStreetMapProvider } from 'leaflet-geosearch/src/providers';
+import debounce from 'lodash/debounce';
 
 function generateHtmlContent(menuItems) {
     var content = '<ul class="panel-list">'
@@ -136,24 +137,30 @@ L.Control.SearchBox = L.Control.extend({
         container.appendChild(this._createControl());
         container.appendChild(this._createPanel(headerTitle, menuItems));
 
-        bean.on(container, 'keyup', "#searchboxinput", (e) => {
-            let value = e.target.value;
-            if (value.length === 0) {
-                this._clearSearchResult();
-            }
-            if (value.length < 2) {
-                return;
-            }
-            this._suggest(value);
-        });
+        bean.on(container, 'keyup', "#searchboxinput",
+
+            debounce((e) => {
+                let value = e.target.value;
+                if (value.length === 0) {
+                    this._clearSearchResult();
+                }
+                if (value.length < 2) {
+                    return;
+                }
+                this._suggest(value)
+            }, 300)
+        );
         bean.on(container, 'click', "#searchboxinput", (e) => {
             this._showSearchResult();
         });
 
-        bean.on(container, 'click', "#searchbox-searchbutton", () => {
-            var searchkeywords = document.querySelector("#searchboxinput").value
-            this._suggest(searchkeywords)
-        });
+        bean.on(container, 'click', "#searchbox-searchbutton", debounce(() => {
+            var value = document.querySelector("#searchboxinput").value;
+            this._suggest(value);
+        }, 300, {
+                'leading': true,
+                'trailing': false
+            }));
 
         bean.on(container, 'click', "#searchbox-menubutton", function () {
             var panel = document.querySelector('.panel');
