@@ -1424,38 +1424,6 @@ function generateHtmlContent(menuItems) {
 }
 
 Control.SearchBox = Control.extend({
-  _sideBarHeaderTitle: 'Sample Title',
-  _sideBarMenuItems: {
-    Items: [{
-      type: "link",
-      name: "Link 1 (github.com)",
-      href: "http://github.com",
-      icon: "icon-local-carwash"
-    }, {
-      type: "link",
-      name: "Link 2 (google.com)",
-      href: "http://google.com",
-      icon: "icon-cloudy"
-    }, {
-      type: "button",
-      name: "Button 1",
-      onclick: "alert('button 1 clicked !')",
-      icon: "icon-potrait"
-    }, {
-      type: "button",
-      name: "Button 2",
-      onclick: "alert('button 2 clicked !')",
-      icon: "icon-local-dining"
-    }, {
-      type: "link",
-      name: "Link 3 (stackoverflow.com)",
-      href: 'http://stackoverflow.com',
-      icon: "icon-bike"
-    }],
-    _searchfunctionCallBack: function (x) {
-      alert('calling the default search call back');
-    }
-  },
   options: {
     position: 'topleft'
   },
@@ -1490,17 +1458,18 @@ Control.SearchBox = Control.extend({
     return container;
   },
   _createControl: function () {
+    var headerTitle = this._sideBarHeaderTitle;
+    var menuItems = this._sideBarMenuItems;
+    var sideEnabled = headerTitle && menuItems;
     var container = DomUtil.create('div');
     container.id = 'controlbox';
     container.innerHTML = `
-				<div id="boxcontainer" class="searchbox searchbox-shadow" >
-				     <div class="searchbox-menu-container">
-						<button aria-label="Menu" id="searchbox-menubutton" class="searchbox-menubutton"></button> 
-                        <span aria-hidden="true"  style="display:none">Menu</span> 
-                    </div>				
-				    <div>
+                <div id="boxcontainer" class="searchbox searchbox-shadow" >
+                    ${sideEnabled ? `<div class="searchbox-menu-container">
+                            <button aria-label="Menu" id="searchbox-menubutton" class="searchbox-menubutton"></button> 
+                            <span aria-hidden="true"  style="display:none">Menu</span> 
+                        </div>` : ""}
 						<input id="searchboxinput" type="text"  style="position: relative;" />
-					</div>
 					<div class="searchbox-searchbutton-container">
                         <button aria-label="search"  id="searchbox-searchbutton"  class="searchbox-searchbutton"></button> 
                         <span aria-hidden="true"  style="display:none;">search</span>
@@ -1558,8 +1527,9 @@ Control.SearchBox = Control.extend({
     container.id = "controlcontainer";
     var headerTitle = this._sideBarHeaderTitle;
     var menuItems = this._sideBarMenuItems;
+    var sideEnabled = headerTitle && menuItems;
     container.appendChild(this._createControl());
-    container.appendChild(this._createPanel(headerTitle, menuItems));
+    if (sideEnabled) container.appendChild(this._createPanel(headerTitle, menuItems));
     bean.on(container, 'keyup', "#searchboxinput", debounce_1(e => {
       let value = e.target.value;
 
@@ -1584,14 +1554,18 @@ Control.SearchBox = Control.extend({
       'leading': true,
       'trailing': false
     }));
-    bean.on(container, 'click', "#searchbox-menubutton", function () {
-      var panel = document.querySelector('.panel');
-      panel.style.left = '0px';
-    });
-    bean.on(container, 'click', ".panel-close-button", function () {
-      var panel = document.querySelector('.panel');
-      panel.style.left = '-300px';
-    });
+
+    if (sideEnabled) {
+      bean.on(container, 'click', "#searchbox-menubutton", function () {
+        var panel = document.querySelector('.panel');
+        panel.style.left = '0px';
+      });
+      bean.on(container, 'click', ".panel-close-button", function () {
+        var panel = document.querySelector('.panel');
+        panel.style.left = '-300px';
+      });
+    }
+
     bean.on(container, 'click', '.result-list-item a', e => {
       e.preventDefault(); // lat lng
 

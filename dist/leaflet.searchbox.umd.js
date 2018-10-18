@@ -1817,38 +1817,6 @@
   }
 
   L.Control.SearchBox = L.Control.extend({
-    _sideBarHeaderTitle: 'Sample Title',
-    _sideBarMenuItems: {
-      Items: [{
-        type: "link",
-        name: "Link 1 (github.com)",
-        href: "http://github.com",
-        icon: "icon-local-carwash"
-      }, {
-        type: "link",
-        name: "Link 2 (google.com)",
-        href: "http://google.com",
-        icon: "icon-cloudy"
-      }, {
-        type: "button",
-        name: "Button 1",
-        onclick: "alert('button 1 clicked !')",
-        icon: "icon-potrait"
-      }, {
-        type: "button",
-        name: "Button 2",
-        onclick: "alert('button 2 clicked !')",
-        icon: "icon-local-dining"
-      }, {
-        type: "link",
-        name: "Link 3 (stackoverflow.com)",
-        href: 'http://stackoverflow.com',
-        icon: "icon-bike"
-      }],
-      _searchfunctionCallBack: function _searchfunctionCallBack(x) {
-        alert('calling the default search call back');
-      }
-    },
     options: {
       position: 'topleft'
     },
@@ -1876,9 +1844,12 @@
       return container;
     },
     _createControl: function _createControl() {
+      var headerTitle = this._sideBarHeaderTitle;
+      var menuItems = this._sideBarMenuItems;
+      var sideEnabled = headerTitle && menuItems;
       var container = L.DomUtil.create('div');
       container.id = 'controlbox';
-      container.innerHTML = "\n\t\t\t\t<div id=\"boxcontainer\" class=\"searchbox searchbox-shadow\" >\n\t\t\t\t     <div class=\"searchbox-menu-container\">\n\t\t\t\t\t\t<button aria-label=\"Menu\" id=\"searchbox-menubutton\" class=\"searchbox-menubutton\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                    </div>\t\t\t\t\n\t\t\t\t    <div>\n\t\t\t\t\t\t<input id=\"searchboxinput\" type=\"text\"  style=\"position: relative;\" />\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"searchbox-searchbutton-container\">\n                        <button aria-label=\"search\"  id=\"searchbox-searchbutton\"  class=\"searchbox-searchbutton\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"search-result\"></div>\n                </div>\n                ";
+      container.innerHTML = "\n                <div id=\"boxcontainer\" class=\"searchbox searchbox-shadow\" >\n                    " + (sideEnabled ? "<div class=\"searchbox-menu-container\">\n                            <button aria-label=\"Menu\" id=\"searchbox-menubutton\" class=\"searchbox-menubutton\"></button> \n                            <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                        </div>" : "") + "\n\t\t\t\t\t\t<input id=\"searchboxinput\" type=\"text\"  style=\"position: relative;\" />\n\t\t\t\t\t<div class=\"searchbox-searchbutton-container\">\n                        <button aria-label=\"search\"  id=\"searchbox-searchbutton\"  class=\"searchbox-searchbutton\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"search-result\"></div>\n                </div>\n                ";
       return container;
     },
     _genResultList: function _genResultList(result) {
@@ -1935,8 +1906,9 @@
       container.id = "controlcontainer";
       var headerTitle = this._sideBarHeaderTitle;
       var menuItems = this._sideBarMenuItems;
+      var sideEnabled = headerTitle && menuItems;
       container.appendChild(this._createControl());
-      container.appendChild(this._createPanel(headerTitle, menuItems));
+      if (sideEnabled) container.appendChild(this._createPanel(headerTitle, menuItems));
       bean.on(container, 'keyup', "#searchboxinput", debounce_1(function (e) {
         _newArrowCheck(this, _this2);
 
@@ -1967,14 +1939,18 @@
         'leading': true,
         'trailing': false
       }));
-      bean.on(container, 'click', "#searchbox-menubutton", function () {
-        var panel = document.querySelector('.panel');
-        panel.style.left = '0px';
-      });
-      bean.on(container, 'click', ".panel-close-button", function () {
-        var panel = document.querySelector('.panel');
-        panel.style.left = '-300px';
-      });
+
+      if (sideEnabled) {
+        bean.on(container, 'click', "#searchbox-menubutton", function () {
+          var panel = document.querySelector('.panel');
+          panel.style.left = '0px';
+        });
+        bean.on(container, 'click', ".panel-close-button", function () {
+          var panel = document.querySelector('.panel');
+          panel.style.left = '-300px';
+        });
+      }
+
       bean.on(container, 'click', '.result-list-item a', function (e) {
         _newArrowCheck(this, _this2);
 

@@ -16,6 +16,7 @@ map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 
 
 var control = new SearchBox({
+    // remove these if dont need sidebar
     sidebarTitleText: 'Header',
     sidebarMenuItems: {
         Items: [
@@ -28,12 +29,5 @@ var control = new SearchBox({
         ]
     }
 });
-
-control._searchfunctionCallBack = function (searchkeywords) {
-    if (!searchkeywords) {
-        searchkeywords = "The search call back is clicked !!"
-    }
-    console.log(searchkeywords);
-}
 
 map.addControl(control);
