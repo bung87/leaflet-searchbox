@@ -1542,7 +1542,11 @@ Control.SearchBox = Control.extend({
     let self = this;
     provider.search({
       query: query
-    }).then(this._genResultList);
+    }).then(r => {
+      self._genResultList(r);
+
+      self._showSearchResult();
+    });
 
     self._map.once('click', function a(ev) {
       self._hideSearchResult();

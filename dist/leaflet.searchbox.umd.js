@@ -1909,18 +1909,26 @@
       document.querySelector('.search-result').innerHTML = '';
     },
     _suggest: function _suggest(query) {
+      var _this = this;
+
       var provider = this.provider;
       var self = this;
       provider.search({
         query: query
-      }).then(this._genResultList);
+      }).then(function (r) {
+        _newArrowCheck(this, _this);
+
+        self._genResultList(r);
+
+        self._showSearchResult();
+      }.bind(this));
 
       self._map.once('click', function a(ev) {
         self._hideSearchResult();
       });
     },
     onAdd: function onAdd(map) {
-      var _this = this;
+      var _this2 = this;
 
       this.provider = new Provider$4();
       var container = L.DomUtil.create('div');
@@ -1930,7 +1938,7 @@
       container.appendChild(this._createControl());
       container.appendChild(this._createPanel(headerTitle, menuItems));
       bean.on(container, 'keyup', "#searchboxinput", debounce_1(function (e) {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
 
         var value = e.target.value;
 
@@ -1945,12 +1953,12 @@
         this._suggest(value);
       }.bind(this), 300));
       bean.on(container, 'click', "#searchboxinput", function (e) {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
 
         this._showSearchResult();
       }.bind(this));
       bean.on(container, 'click', "#searchbox-searchbutton", debounce_1(function () {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
 
         var value = document.querySelector("#searchboxinput").value;
 
@@ -1968,7 +1976,7 @@
         panel.style.left = '-300px';
       });
       bean.on(container, 'click', '.result-list-item a', function (e) {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
 
         e.preventDefault(); // lat lng
 

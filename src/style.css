@@ -277,6 +277,8 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
     top: 47px;
     border-top: 1px solid #ccc;
     z-index: -1;
+    display:none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 -1px 0px rgba(0,0,0,0.02);
 }
 .result-list-item {
     padding: 5px 10px;
