@@ -7,4 +7,4 @@ git rm --cached --ignore-unmatch demo.*;
 
 git add index.html *.png *.css demo.*;
 git commit -m 'update page';
-git push
+git push origin gh-pages
