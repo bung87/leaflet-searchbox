@@ -1,6 +1,55 @@
-import { Control, Util, DomUtil, DomEvent } from 'leaflet';
+import { Control, Util, DomUtil, latLng, DomEvent } from 'leaflet';
 
-var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(source, true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(source).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -757,9 +806,9 @@ var bean = createCommonjsModule(function (module) {
       'noConflict': function () {
         context[name] = old;
         return this;
-      } // for IE, clean up on unload to avoid leaks
+      }
+    }; // for IE, clean up on unload to avoid leaks
 
-    };
 
     if (win.attachEvent) {
       var cleanup = function () {
@@ -783,40 +832,6 @@ var bean = createCommonjsModule(function (module) {
   });
 });
 var bean_1 = bean.bean;
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-    var ownKeys = Object.keys(source);
-
-    if (typeof Object.getOwnPropertySymbols === 'function') {
-      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-      }));
-    }
-
-    ownKeys.forEach(function (key) {
-      _defineProperty(target, key, source[key]);
-    });
-  }
-
-  return target;
-}
 
 class Provider {
   constructor(options = {}) {
@@ -854,7 +869,7 @@ class Provider$4 extends Provider {
     const {
       params
     } = this.options;
-    const paramString = this.getParamString(_objectSpread({}, params, {
+    const paramString = this.getParamString(_objectSpread2({}, params, {
       format: 'json',
       q: query
     }));
@@ -867,7 +882,7 @@ class Provider$4 extends Provider {
     const {
       params
     } = this.options;
-    const paramString = this.getParamString(_objectSpread({}, params, {
+    const paramString = this.getParamString(_objectSpread2({}, params, {
       format: 'json',
       // eslint-disable-next-line camelcase
       osm_id: data.raw.osm_id,
@@ -885,7 +900,8 @@ class Provider$4 extends Provider {
       y: r.lat,
       label: r.display_name,
       bounds: [[parseFloat(r.boundingbox[0]), parseFloat(r.boundingbox[2])], // s, w
-      [parseFloat(r.boundingbox[1]), parseFloat(r.boundingbox[3])]],
+      [parseFloat(r.boundingbox[1]), parseFloat(r.boundingbox[3])] // n, e
+      ],
       raw: r
     }));
   }
@@ -1382,6 +1398,7 @@ function debounce(func, wait, options) {
 
       if (maxing) {
         // Handle invocations in a tight loop.
+        clearTimeout(timerId);
         timerId = setTimeout(timerExpired, wait);
         return invokeFunc(lastCallTime);
       }
@@ -1485,7 +1502,7 @@ Control.SearchBox = Control.extend({
     for (var i = 0; i < result.length; i++) {
       var item = result[i];
       content += '<li class="result-list-item">';
-      content += `<a href="#" data-x="${item.x}" data-y="${item.y}">${item.label}</a>`;
+      content += `<a href="#" data-x="${item.x}" data-y="${item.y}" data-label="${item.label}" data-class="${item.raw.class}" data-type="${item.raw.type}" data-display_name="${item.raw.display_name}">${item.label}</a>`;
       content += '</li>';
     }
 
@@ -1569,7 +1586,13 @@ Control.SearchBox = Control.extend({
     bean.on(container, 'click', '.result-list-item a', e => {
       e.preventDefault(); // lat lng
 
-      map.panTo([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+      var location = latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+      map.panTo(location);
+      map.fireEvent('geosearch/showlocation', {
+        location: _objectSpread2({
+          latlng: location
+        }, e.target.dataset)
+      });
 
       this._hideSearchResult();
     });

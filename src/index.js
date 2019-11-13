@@ -88,7 +88,7 @@ L.Control.SearchBox = L.Control.extend({
         for (var i = 0; i < result.length; i++) {
             var item = result[i];
             content += '<li class="result-list-item">';
-            content += `<a href="#" data-x="${item.x}" data-y="${item.y}">${item.label}</a>`;
+            content += `<a href="#" data-x="${item.x}" data-y="${item.y}" data-label="${item.label}" data-class="${item.raw.class}" data-type="${item.raw.type}" data-display_name="${item.raw.display_name}">${item.label}</a>`;
             content += '</li>'
         }
         content += '</ul>'
@@ -171,7 +171,15 @@ L.Control.SearchBox = L.Control.extend({
         bean.on(container, 'click', '.result-list-item a', (e) => {
             e.preventDefault();
             // lat lng
-            map.panTo([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+            var location =  L.latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+            map.panTo(location);
+            map.fireEvent('geosearch/showlocation', {
+                location:{
+                    latlng:location,
+                    ...e.target.dataset
+                }
+                
+              });
             this._hideSearchResult();
         })
 

@@ -12,6 +12,7 @@ const opts = {
 	stylesheetPath: './dist',
 	spritePath: './dist/images/',
 	retina: true,
+	groups:["2x"],
 	ratio: 2
 };
 

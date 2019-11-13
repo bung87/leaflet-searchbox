@@ -237,44 +237,44 @@ a, button, h1, h2, h3, h4, h5, h6, input, ol, p, textarea, th, ul {
 
 .icon-folder
 {
-    background-image:url(images/sprite.@2x.png);
-    background-position:-24px -24px;
-    background-size:72px 72px;
+    background-image: url(images/sprite.@2x.png);
+    background-position: -24px -24px;
+    background-size: 72px 72px;
 }
 
 
 .icon-cloudy
 {
-    background-image:url(images/sprite.@2x.png);
-    background-position:-48px 0px;
-    background-size:72px 72px;
+    background-image: url(images/sprite.@2x.png);
+    background-position: -48px 0px;
+    background-size: 72px 72px;
 }
 
 .icon-potrait
 {
-    background-image:url(images/sprite.@2x.png);
-    background-position:-48px -24px;
-    background-size:72px 72px;
+    background-image: url(images/sprite.@2x.png);
+    background-position: -48px -24px;
+    background-size: 72px 72px;
 }
 
 .icon-local-dining
 {
-    background-image:url(images/sprite.@2x.png);
-    background-position:0px -48px;
-    background-size:72px 72px;
+    background-image: url(images/sprite.@2x.png);
+    background-position: 0px -48px;
+    background-size: 72px 72px;
 }
 
 .icon-bike
 {
-    background-image:url(images/sprite.@2x.png);
-    background-position:-24px -48px;
-    background-size:72px 72px;
+    background-image: url(images/sprite.@2x.png);
+    background-position: -24px -48px;
+    background-size: 72px 72px;
 }
 .icon-local-carwash
 {
-    background-image:url(images/sprite.@2x.png);
-    background-position:-48px -48px;
-    background-size:72px 72px;
+    background-image: url(images/sprite.@2x.png);
+    background-position: -48px -48px;
+    background-size: 72px 72px;
 }
 
 .search-result {

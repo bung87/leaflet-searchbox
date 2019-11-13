@@ -18,42 +18,6 @@
     return _typeof(obj);
   }
 
-  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-    try {
-      var info = gen[key](arg);
-      var value = info.value;
-    } catch (error) {
-      reject(error);
-      return;
-    }
-
-    if (info.done) {
-      resolve(value);
-    } else {
-      Promise.resolve(value).then(_next, _throw);
-    }
-  }
-
-  function _asyncToGenerator(fn) {
-    return function () {
-      var self = this,
-          args = arguments;
-      return new Promise(function (resolve, reject) {
-        var gen = fn.apply(self, args);
-
-        function _next(value) {
-          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-        }
-
-        function _throw(err) {
-          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-        }
-
-        _next(undefined);
-      });
-    };
-  }
-
   function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
@@ -69,20 +33,35 @@
     return obj;
   }
 
-  function _objectSpread(target) {
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
-      var ownKeys = Object.keys(source);
 
-      if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-        }));
+      if (i % 2) {
+        ownKeys(source, true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(source).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
       }
-
-      ownKeys.forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
     }
 
     return target;
@@ -100,7 +79,7 @@
     }
   }
 
-  var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function createCommonjsModule(fn, module) {
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -863,9 +842,9 @@
         'noConflict': function noConflict() {
           context[name] = old;
           return this;
-        } // for IE, clean up on unload to avoid leaks
+        }
+      }; // for IE, clean up on unload to avoid leaks
 
-      };
 
       if (win.attachEvent) {
         var cleanup = function cleanup() {
@@ -909,50 +888,40 @@
       }.bind(this)).join('&');
     };
 
-    _proto.search =
-    /*#__PURE__*/
-    function () {
-      var _search = _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee(_ref) {
-        var query, protocol, url, request, json;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                query = _ref.query;
-                // eslint-disable-next-line no-bitwise
-                protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-                url = this.endpoint({
-                  query: query,
-                  protocol: protocol
-                });
-                _context.next = 5;
-                return fetch(url);
+    _proto.search = function search(_ref) {
+      var query, protocol, url, request, json;
+      return regeneratorRuntime.async(function search$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              query = _ref.query;
+              // eslint-disable-next-line no-bitwise
+              protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
+              url = this.endpoint({
+                query: query,
+                protocol: protocol
+              });
+              _context.next = 5;
+              return regeneratorRuntime.awrap(fetch(url));
 
-              case 5:
-                request = _context.sent;
-                _context.next = 8;
-                return request.json();
+            case 5:
+              request = _context.sent;
+              _context.next = 8;
+              return regeneratorRuntime.awrap(request.json());
 
-              case 8:
-                json = _context.sent;
-                return _context.abrupt("return", this.parse({
-                  data: json
-                }));
+            case 8:
+              json = _context.sent;
+              return _context.abrupt("return", this.parse({
+                data: json
+              }));
 
-              case 10:
-              case "end":
-                return _context.stop();
-            }
+            case 10:
+            case "end":
+              return _context.stop();
           }
-        }, _callee, this);
-      }));
-
-      return function search(_x) {
-        return _search.apply(this, arguments);
-      };
-    }();
+        }
+      }, null, this);
+    };
 
     return Provider;
   }();
@@ -1031,7 +1000,7 @@
           jsonp = _ref.jsonp;
 
       var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread({}, params, {
+      var paramString = this.getParamString(_objectSpread2({}, params, {
         query: query,
         jsonp: jsonp
       }));
@@ -1055,53 +1024,44 @@
           y: r.point.coordinates[0],
           label: r.address.formattedAddress,
           bounds: [[r.bbox[0], r.bbox[1]], // s, w
-          [r.bbox[2], r.bbox[3]]],
+          [r.bbox[2], r.bbox[3]] // n, e
+          ],
           raw: r
         };
       }.bind(this));
     };
 
-    _proto.search =
-    /*#__PURE__*/
-    function () {
-      var _search = _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee(_ref3) {
-        var query, protocol, jsonp, url, json;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                query = _ref3.query;
-                // eslint-disable-next-line no-bitwise
-                protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-                jsonp = "BING_JSONP_CB_" + Date.now();
-                url = this.endpoint({
-                  query: query,
-                  protocol: protocol,
-                  jsonp: jsonp
-                });
-                _context.next = 6;
-                return createScriptElement(url, jsonp);
+    _proto.search = function search(_ref3) {
+      var query, protocol, jsonp, url, json;
+      return regeneratorRuntime.async(function search$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              query = _ref3.query;
+              // eslint-disable-next-line no-bitwise
+              protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
+              jsonp = "BING_JSONP_CB_" + Date.now();
+              url = this.endpoint({
+                query: query,
+                protocol: protocol,
+                jsonp: jsonp
+              });
+              _context.next = 6;
+              return regeneratorRuntime.awrap(createScriptElement(url, jsonp));
 
-              case 6:
-                json = _context.sent;
-                return _context.abrupt("return", this.parse({
-                  data: json
-                }));
+            case 6:
+              json = _context.sent;
+              return _context.abrupt("return", this.parse({
+                data: json
+              }));
 
-              case 8:
-              case "end":
-                return _context.stop();
-            }
+            case 8:
+            case "end":
+              return _context.stop();
           }
-        }, _callee, this);
-      }));
-
-      return function search(_x) {
-        return _search.apply(this, arguments);
-      };
-    }();
+        }
+      }, null, this);
+    };
 
     return Provider$$1;
   }(Provider);
@@ -1123,7 +1083,7 @@
           protocol = _ref.protocol;
 
       var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread({}, params, {
+      var paramString = this.getParamString(_objectSpread2({}, params, {
         f: 'json',
         text: query
       }));
@@ -1142,7 +1102,8 @@
           y: r.feature.geometry.y,
           label: r.name,
           bounds: [[r.extent.ymin, r.extent.xmin], // s, w
-          [r.extent.ymax, r.extent.xmax]],
+          [r.extent.ymax, r.extent.xmax] // n, e
+          ],
           raw: r
         };
       }.bind(this));
@@ -1168,7 +1129,7 @@
           protocol = _ref.protocol;
 
       var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread({}, params, {
+      var paramString = this.getParamString(_objectSpread2({}, params, {
         address: query
       })); // google requires a secure connection when using api keys
 
@@ -1188,7 +1149,8 @@
           y: r.geometry.location.lat,
           label: r.formatted_address,
           bounds: [[r.geometry.viewport.southwest.lat, r.geometry.viewport.southwest.lng], // s, w
-          [r.geometry.viewport.northeast.lat, r.geometry.viewport.northeast.lng]],
+          [r.geometry.viewport.northeast.lat, r.geometry.viewport.northeast.lng] // n, e
+          ],
           raw: r
         };
       }.bind(this));
@@ -1213,7 +1175,7 @@
           query = _ref.query;
 
       var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread({}, params, {
+      var paramString = this.getParamString(_objectSpread2({}, params, {
         format: 'json',
         q: query
       }));
@@ -1225,7 +1187,7 @@
           data = _ref2.data;
 
       var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread({}, params, {
+      var paramString = this.getParamString(_objectSpread2({}, params, {
         format: 'json',
         // eslint-disable-next-line camelcase
         osm_id: data.raw.osm_id,
@@ -1247,59 +1209,50 @@
           y: r.lat,
           label: r.display_name,
           bounds: [[parseFloat(r.boundingbox[0]), parseFloat(r.boundingbox[2])], // s, w
-          [parseFloat(r.boundingbox[1]), parseFloat(r.boundingbox[3])]],
+          [parseFloat(r.boundingbox[1]), parseFloat(r.boundingbox[3])] // n, e
+          ],
           raw: r
         };
       }.bind(this));
     };
 
-    _proto.search =
-    /*#__PURE__*/
-    function () {
-      var _search = _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee(_ref4) {
-        var query, data, protocol, url, request, json;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                query = _ref4.query, data = _ref4.data;
-                // eslint-disable-next-line no-bitwise
-                protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-                url = data ? this.endpointReverse({
-                  data: data,
-                  protocol: protocol
-                }) : this.endpoint({
-                  query: query,
-                  protocol: protocol
-                });
-                _context.next = 5;
-                return fetch(url);
+    _proto.search = function search(_ref4) {
+      var query, data, protocol, url, request, json;
+      return regeneratorRuntime.async(function search$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              query = _ref4.query, data = _ref4.data;
+              // eslint-disable-next-line no-bitwise
+              protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
+              url = data ? this.endpointReverse({
+                data: data,
+                protocol: protocol
+              }) : this.endpoint({
+                query: query,
+                protocol: protocol
+              });
+              _context.next = 5;
+              return regeneratorRuntime.awrap(fetch(url));
 
-              case 5:
-                request = _context.sent;
-                _context.next = 8;
-                return request.json();
+            case 5:
+              request = _context.sent;
+              _context.next = 8;
+              return regeneratorRuntime.awrap(request.json());
 
-              case 8:
-                json = _context.sent;
-                return _context.abrupt("return", this.parse({
-                  data: data ? [json] : json
-                }));
+            case 8:
+              json = _context.sent;
+              return _context.abrupt("return", this.parse({
+                data: data ? [json] : json
+              }));
 
-              case 10:
-              case "end":
-                return _context.stop();
-            }
+            case 10:
+            case "end":
+              return _context.stop();
           }
-        }, _callee, this);
-      }));
-
-      return function search(_x) {
-        return _search.apply(this, arguments);
-      };
-    }();
+        }
+      }, null, this);
+    };
 
     _proto.translateOsmType = function translateOsmType(type) {
       if (type === 'node') return 'N';
@@ -1775,6 +1728,7 @@
 
         if (maxing) {
           // Handle invocations in a tight loop.
+          clearTimeout(timerId);
           timerId = setTimeout(timerExpired, wait);
           return invokeFunc(lastCallTime);
         }
@@ -1858,7 +1812,7 @@
       for (var i = 0; i < result.length; i++) {
         var item = result[i];
         content += '<li class="result-list-item">';
-        content += "<a href=\"#\" data-x=\"" + item.x + "\" data-y=\"" + item.y + "\">" + item.label + "</a>";
+        content += "<a href=\"#\" data-x=\"" + item.x + "\" data-y=\"" + item.y + "\" data-label=\"" + item.label + "\" data-class=\"" + item.raw.class + "\" data-type=\"" + item.raw.type + "\" data-display_name=\"" + item.raw.display_name + "\">" + item.label + "</a>";
         content += '</li>';
       }
 
@@ -1956,7 +1910,13 @@
 
         e.preventDefault(); // lat lng
 
-        map.panTo([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+        var location = L.latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+        map.panTo(location);
+        map.fireEvent('geosearch/showlocation', {
+          location: _objectSpread2({
+            latlng: location
+          }, e.target.dataset)
+        });
 
         this._hideSearchResult();
       }.bind(this));

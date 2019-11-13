@@ -2,6 +2,9 @@ import * as L from 'leaflet';
 import SearchBox from '../dist/leaflet.searchbox.esm.js'
 import '../src/style.css';
 import 'leaflet/dist/leaflet.css';
+import marker from 'leaflet/dist/images/marker-icon.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
+import marker2x from 'leaflet/dist/images/marker-icon-2x.png'
 
 function button2_click() {
     console.log('button 2 clicked !!!');
@@ -31,3 +34,12 @@ var control = new SearchBox({
 });
 
 map.addControl(control);
+map.on('geosearch/showlocation',x => {
+    console.log(x)
+    L.marker(x.location.latlng,{icon:new L.Icon({
+        iconUrl:marker,
+        iconRetinaUrl:marker2x,
+        shadowUrl,
+        className:"geosearch-location"
+    }),draggable: false}).addTo(map);
+})
