@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import SearchBox from '../dist/leaflet.searchbox.esm.js'
-import '../src/style.css';
+import '../dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import marker from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
