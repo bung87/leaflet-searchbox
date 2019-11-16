@@ -1,8 +1,8 @@
-rm -rf dist;
-npm run build;
+rm -rf build;
+yarn run build;
 
 git checkout gh-pages;
-cp -r dist/* .;
+cp -r build/* .;
 git rm --cached --ignore-unmatch demo.*;
 
 git add index.html *.png *.css demo.*;

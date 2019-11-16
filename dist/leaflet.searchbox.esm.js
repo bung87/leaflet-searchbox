@@ -1,5 +1,41 @@
 import { Control, Util, DomUtil, latLng, DomEvent } from 'leaflet';
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -80,13 +116,13 @@ var bean = createCommonjsModule(function (module) {
         ONE = {} // singleton for quick matching making add() do one()
     ,
         slice = Array.prototype.slice,
-        str2arr = function (s, d) {
+        str2arr = function str2arr(s, d) {
       return s.split(d || ' ');
     },
-        isString = function (o) {
+        isString = function isString(o) {
       return typeof o == 'string';
     },
-        isFunction = function (o) {
+        isFunction = function isFunction(o) {
       return typeof o == 'function';
     } // events that we consider to be 'native', anything not in this list will
     // be treated as a custom event
@@ -120,7 +156,9 @@ var bean = createCommonjsModule(function (module) {
     // convert to a hash for quick lookups
     ,
         nativeEvents = function (hash, events, i) {
-      for (i = 0; i < events.length; i++) events[i] && (hash[events[i]] = 1);
+      for (i = 0; i < events.length; i++) {
+        events[i] && (hash[events[i]] = 1);
+      }
 
       return hash;
     }({}, str2arr(standardNativeEvents + (W3C_MODEL ? w3cNativeEvents : ''))) // custom events are events that we *fake*, they are not provided natively but
@@ -133,11 +171,13 @@ var bean = createCommonjsModule(function (module) {
         container = container.nodeType === 9 || container === window ? root : container;
         return container !== element && container.contains(element);
       } : function (element, container) {
-        while (element = element.parentNode) if (element === container) return 1;
+        while (element = element.parentNode) {
+          if (element === container) return 1;
+        }
 
         return 0;
       },
-          check = function (event) {
+          check = function check(event) {
         var related = event.relatedTarget;
         return !related ? related == null : related !== this && related.prefix !== 'xul' && !/document/.test(this.toString()) && !isAncestor(related, this);
       };
@@ -174,14 +214,14 @@ var bean = createCommonjsModule(function (module) {
           typeFixers = [{
         // key events
         reg: /key/i,
-        fix: function (event, newEvent) {
+        fix: function fix(event, newEvent) {
           newEvent.keyCode = event.keyCode || event.which;
           return keyProps;
         }
       }, {
         // mouse events
         reg: /click|mouse(?!(.*wheel|scroll))|menu|drag|drop/i,
-        fix: function (event, newEvent, type) {
+        fix: function fix(event, newEvent, type) {
           newEvent.rightClick = event.which === 3 || event.button === 2;
           newEvent.pos = {
             x: 0,
@@ -205,43 +245,43 @@ var bean = createCommonjsModule(function (module) {
       }, {
         // mouse wheel events
         reg: /mouse.*(wheel|scroll)/i,
-        fix: function () {
+        fix: function fix() {
           return mouseWheelProps;
         }
       }, {
         // TextEvent
         reg: /^text/i,
-        fix: function () {
+        fix: function fix() {
           return textProps;
         }
       }, {
         // touch and gesture events
         reg: /^touch|^gesture/i,
-        fix: function () {
+        fix: function fix() {
           return touchProps;
         }
       }, {
         // message events
         reg: /^message$/i,
-        fix: function () {
+        fix: function fix() {
           return messageProps;
         }
       }, {
         // popstate events
         reg: /^popstate$/i,
-        fix: function () {
+        fix: function fix() {
           return stateProps;
         }
       }, {
         // everything else
         reg: /.*/,
-        fix: function () {
+        fix: function fix() {
           return commonProps;
         }
       }],
           typeFixerMap = {} // used to map event types to fixer functions (above), a basic cache mechanism
       ,
-          Event = function (event, element, isNative) {
+          Event = function Event(event, element, isNative) {
         if (!arguments.length) return;
         event = event || ((element.ownerDocument || element.document || element).parentWindow || win).event;
         this.originalEvent = event;
@@ -322,7 +362,7 @@ var bean = createCommonjsModule(function (module) {
       return Event;
     }() // if we're in old IE we can't do onpropertychange on doc or win so we use doc.documentElement for both
     ,
-        targetElement = function (element, isNative) {
+        targetElement = function targetElement(element, isNative) {
       return !W3C_MODEL && !isNative && (element === doc || element === win) ? root : element;
     }
     /**
@@ -333,11 +373,11 @@ var bean = createCommonjsModule(function (module) {
     ,
         RegEntry = function () {
       // each handler is wrapped so we can handle delegation and custom events
-      var wrappedHandler = function (element, fn, condition, args) {
-        var call = function (event, eargs) {
+      var wrappedHandler = function wrappedHandler(element, fn, condition, args) {
+        var call = function call(event, eargs) {
           return fn.apply(element, args ? slice.call(eargs, event ? 0 : 1).concat(args) : eargs);
         },
-            findTarget = function (event, eventElement) {
+            findTarget = function findTarget(event, eventElement) {
           return fn.__beanDel ? fn.__beanDel.ft(event.target, element) : eventElement;
         },
             handler = condition ? function (event) {
@@ -356,7 +396,7 @@ var bean = createCommonjsModule(function (module) {
         handler.__beanDel = fn.__beanDel;
         return handler;
       },
-          RegEntry = function (element, type, handler, original, namespaces, args, root) {
+          RegEntry = function RegEntry(element, type, handler, original, namespaces, args, root) {
         var customType = customEvents[type],
             isNative;
 
@@ -418,7 +458,7 @@ var bean = createCommonjsModule(function (module) {
       var map = {} // generic functional search of our registry for matching listeners,
       // `fn` returns false to break out of the loop
       ,
-          forAll = function (element, type, original, handler, root, fn) {
+          forAll = function forAll(element, type, original, handler, root, fn) {
         var pfx = root ? 'r' : '$';
 
         if (!type || type == '*') {
@@ -440,7 +480,7 @@ var bean = createCommonjsModule(function (module) {
           }
         }
       },
-          has = function (element, type, original, root) {
+          has = function has(element, type, original, root) {
         // we're not using forAll here simply because it's a bit slower and this
         // needs to be fast
         var i,
@@ -454,20 +494,20 @@ var bean = createCommonjsModule(function (module) {
 
         return false;
       },
-          get = function (element, type, original, root) {
+          get = function get(element, type, original, root) {
         var entries = [];
         forAll(element, type, original, null, root, function (entry) {
           return entries.push(entry);
         });
         return entries;
       },
-          put = function (entry) {
+          put = function put(entry) {
         var has = !entry.root && !this.has(entry.element, entry.type, null, false),
             key = (entry.root ? 'r' : '$') + entry.type;
         (map[key] || (map[key] = [])).push(entry);
         return has;
       },
-          del = function (entry) {
+          del = function del(entry) {
         forAll(entry.element, entry.type, null, entry.handler, entry.root, function (entry, list, i) {
           list.splice(i, 1);
           entry.removed = true;
@@ -476,7 +516,7 @@ var bean = createCommonjsModule(function (module) {
         });
       } // dump all entries, used for onunload
       ,
-          entries = function () {
+          entries = function entries() {
         var t,
             entries = [];
 
@@ -498,7 +538,7 @@ var bean = createCommonjsModule(function (module) {
     // but for older browsers we need Qwery, Sizzle or similar
     ,
         selectorEngine,
-        setSelectorEngine = function (e) {
+        setSelectorEngine = function setSelectorEngine(e) {
       if (!arguments.length) {
         selectorEngine = doc.querySelectorAll ? function (s, r) {
           return r.querySelectorAll(s);
@@ -511,7 +551,7 @@ var bean = createCommonjsModule(function (module) {
     } // we attach this listener to each DOM event that we need to listen to, only once
     // per event type per DOM element
     ,
-        rootListener = function (event, type) {
+        rootListener = function rootListener(event, type) {
       if (!W3C_MODEL && type && event && event.propertyName != '_on' + type) return;
       var listeners = registry.get(this, type || event.type, null, false),
           l = listeners.length,
@@ -550,14 +590,14 @@ var bean = createCommonjsModule(function (module) {
         }
       }
     },
-        once = function (rm, element, type, fn, originalFn) {
+        once = function once(rm, element, type, fn, originalFn) {
       // wrap the handler in a handler that does a remove as well
       return function () {
         fn.apply(this, arguments);
         rm(element, type, originalFn);
       };
     },
-        removeListener = function (element, orgType, handler, namespaces) {
+        removeListener = function removeListener(element, orgType, handler, namespaces) {
       var type = orgType && orgType.replace(nameRegex, ''),
           handlers = registry.get(element, type, null, false),
           removed = {},
@@ -588,10 +628,10 @@ var bean = createCommonjsModule(function (module) {
       }
     } // set up a delegate helper using the given selector, wrap the handler function
     ,
-        delegate = function (selector, fn) {
+        delegate = function delegate(selector, fn) {
       //TODO: findTarget (therefore $) is called twice, once for match and once for
       // setting e.currentTarget, fix this so it's only needed once
-      var findTarget = function (target, root) {
+      var findTarget = function findTarget(target, root) {
         var i,
             array = isString(selector) ? selectorEngine(selector, root) : selector;
 
@@ -601,7 +641,7 @@ var bean = createCommonjsModule(function (module) {
           }
         }
       },
-          handler = function (e) {
+          handler = function handler(e) {
         var match = findTarget(e.target, this);
         if (match) fn.apply(match, arguments);
       }; // __beanDel isn't pleasant but it's a private function, not exposed outside of Bean
@@ -632,7 +672,7 @@ var bean = createCommonjsModule(function (module) {
       * off(element[, eventType(s)[, handler ]])
       */
     ,
-        off = function (element, typeSpec, fn) {
+        off = function off(element, typeSpec, fn) {
       var isTypeStr = isString(typeSpec),
           k,
           type,
@@ -643,7 +683,9 @@ var bean = createCommonjsModule(function (module) {
         // off(el, 't1 t2 t3', fn) or off(el, 't1 t2 t3')
         typeSpec = str2arr(typeSpec);
 
-        for (i = typeSpec.length; i--;) off(element, typeSpec[i], fn);
+        for (i = typeSpec.length; i--;) {
+          off(element, typeSpec[i], fn);
+        }
 
         return element;
       }
@@ -671,7 +713,7 @@ var bean = createCommonjsModule(function (module) {
       * on(element, eventType(s)[, selector], handler[, args ])
       */
     ,
-        on = function (element, events, selector, fn) {
+        on = function on(element, events, selector, fn) {
       var originalFn, type, types, i, args, entry, first; //TODO: the undefined check means you can't pass an 'args' argument, fix this perhaps?
 
       if (selector === undefined && typeof events == 'object') {
@@ -722,14 +764,14 @@ var bean = createCommonjsModule(function (module) {
       * Deprecated: kept (for now) for backward-compatibility
       */
     ,
-        add = function (element, events, fn, delfn) {
+        add = function add(element, events, fn, delfn) {
       return on.apply(null, !isString(fn) ? slice.call(arguments) : [element, fn, events, delfn].concat(arguments.length > 3 ? slice.call(arguments, 5) : []));
     }
     /**
       * one(element, eventType(s)[, selector], handler[, args ])
       */
     ,
-        one = function () {
+        one = function one() {
       return on.apply(ONE, arguments);
     }
     /**
@@ -739,7 +781,7 @@ var bean = createCommonjsModule(function (module) {
       * then we can use the browser's DOM event system, otherwise we trigger handlers manually
       */
     ,
-        fire = function (element, type, args) {
+        fire = function fire(element, type, args) {
       var types = str2arr(type),
           i,
           j,
@@ -775,7 +817,7 @@ var bean = createCommonjsModule(function (module) {
       * TODO: perhaps for consistency we should allow the same flexibility in type specifiers?
       */
     ,
-        clone = function (element, from, type) {
+        clone = function clone(element, from, type) {
       var handlers = registry.get(from, type, null, false),
           l = handlers.length,
           i = 0,
@@ -803,7 +845,7 @@ var bean = createCommonjsModule(function (module) {
       'fire': fire,
       'Event': Event,
       'setSelectorEngine': setSelectorEngine,
-      'noConflict': function () {
+      'noConflict': function noConflict() {
         context[name] = old;
         return this;
       }
@@ -811,7 +853,7 @@ var bean = createCommonjsModule(function (module) {
 
 
     if (win.attachEvent) {
-      var cleanup = function () {
+      var cleanup = function cleanup() {
         var i,
             entries = registry.entries();
 
@@ -834,28 +876,36 @@ var bean = createCommonjsModule(function (module) {
 var bean_1 = bean.bean;
 
 class Provider {
-  constructor(options = {}) {
+  constructor() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     this.options = options;
   }
 
   getParamString(params) {
-    return Object.keys(params).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).join('&');
+    return Object.keys(params).map(key => "".concat(encodeURIComponent(key), "=").concat(encodeURIComponent(params[key]))).join('&');
   }
 
-  async search({
-    query
-  }) {
-    // eslint-disable-next-line no-bitwise
-    const protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-    const url = this.endpoint({
-      query,
-      protocol
-    });
-    const request = await fetch(url);
-    const json = await request.json();
-    return this.parse({
-      data: json
-    });
+  search(_ref) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      var {
+        query
+      } = _ref;
+      // eslint-disable-next-line no-bitwise
+      var protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
+
+      var url = _this.endpoint({
+        query,
+        protocol
+      });
+
+      var request = yield fetch(url);
+      var json = yield request.json();
+      return _this.parse({
+        data: json
+      });
+    })();
   }
 
 }
@@ -863,38 +913,41 @@ class Provider {
 /* eslint-disable import/prefer-default-export */
 
 class Provider$4 extends Provider {
-  endpoint({
-    query
-  } = {}) {
-    const {
+  endpoint() {
+    var {
+      query
+    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var {
       params
     } = this.options;
-    const paramString = this.getParamString(_objectSpread2({}, params, {
+    var paramString = this.getParamString(_objectSpread2({}, params, {
       format: 'json',
       q: query
     }));
-    return `https://nominatim.openstreetmap.org/search?${paramString}`;
+    return "https://nominatim.openstreetmap.org/search?".concat(paramString);
   }
 
-  endpointReverse({
-    data
-  } = {}) {
-    const {
+  endpointReverse() {
+    var {
+      data
+    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var {
       params
     } = this.options;
-    const paramString = this.getParamString(_objectSpread2({}, params, {
+    var paramString = this.getParamString(_objectSpread2({}, params, {
       format: 'json',
       // eslint-disable-next-line camelcase
       osm_id: data.raw.osm_id,
       // eslint-disable-next-line camelcase
       osm_type: this.translateOsmType(data.raw.osm_type)
     }));
-    return `https://nominatim.openstreetmap.org/reverse?${paramString}`;
+    return "https://nominatim.openstreetmap.org/reverse?".concat(paramString);
   }
 
-  parse({
-    data
-  }) {
+  parse(_ref) {
+    var {
+      data
+    } = _ref;
     return data.map(r => ({
       x: r.lon,
       y: r.lat,
@@ -906,24 +959,29 @@ class Provider$4 extends Provider {
     }));
   }
 
-  async search({
-    query,
-    data
-  }) {
-    // eslint-disable-next-line no-bitwise
-    const protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-    const url = data ? this.endpointReverse({
-      data,
-      protocol
-    }) : this.endpoint({
-      query,
-      protocol
-    });
-    const request = await fetch(url);
-    const json = await request.json();
-    return this.parse({
-      data: data ? [json] : json
-    });
+  search(_ref2) {
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      var {
+        query,
+        data
+      } = _ref2;
+      // eslint-disable-next-line no-bitwise
+      var protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
+      var url = data ? _this.endpointReverse({
+        data,
+        protocol
+      }) : _this.endpoint({
+        query,
+        protocol
+      });
+      var request = yield fetch(url);
+      var json = yield request.json();
+      return _this.parse({
+        data: data ? [json] : json
+      });
+    })();
   }
 
   translateOsmType(type) {
@@ -997,7 +1055,7 @@ var _root = root;
  * // => Logs the number of milliseconds it took for the deferred invocation.
  */
 
-var now = function () {
+var now = function now() {
   return _root.Date.now();
 };
 
@@ -1444,7 +1502,7 @@ Control.SearchBox = Control.extend({
   options: {
     position: 'topleft'
   },
-  initialize: function (options) {
+  initialize: function initialize(options) {
     Util.setOptions(this, options);
 
     if (options.sidebarTitleText) {
@@ -1455,77 +1513,57 @@ Control.SearchBox = Control.extend({
       this._sideBarMenuItems = options.sidebarMenuItems;
     }
   },
-  _createPanelContent: function (menuItems) {
+  _createPanelContent: function _createPanelContent(menuItems) {
     var container = DomUtil.create('div', 'panel-content');
     var htmlContent = generateHtmlContent(menuItems);
     container.innerHTML = htmlContent;
     return container;
   },
-  _createPanel: function (headerTitle, menuItems) {
+  _createPanel: function _createPanel(headerTitle, menuItems) {
     var container = DomUtil.create('div', 'panel');
-    container.innerHTML = `
-        <div class="panel-header">
-            <div class="panel-header-container">
-                <span class="panel-header-title">${headerTitle}</span>
-                <button aria-label="Menu" id="panelbutton" class="panel-close-button"></button>
-            </div>
-        </div>
-        `;
+    container.innerHTML = "\n        <div class=\"panel-header\">\n            <div class=\"panel-header-container\">\n                <span class=\"panel-header-title\">".concat(headerTitle, "</span>\n                <button aria-label=\"Menu\" id=\"panelbutton\" class=\"panel-close-button\"></button>\n            </div>\n        </div>\n        ");
     container.appendChild(this._createPanelContent(menuItems));
     return container;
   },
-  _createControl: function () {
+  _createControl: function _createControl() {
     var headerTitle = this._sideBarHeaderTitle;
     var menuItems = this._sideBarMenuItems;
     var sideEnabled = headerTitle && menuItems;
     var container = DomUtil.create('div');
     container.id = 'controlbox';
-    container.innerHTML = `
-                <div id="boxcontainer" class="searchbox searchbox-shadow" >
-                    ${sideEnabled ? `<div class="searchbox-menu-container">
-                            <button aria-label="Menu" id="searchbox-menubutton" class="searchbox-menubutton"></button> 
-                            <span aria-hidden="true"  style="display:none">Menu</span> 
-                        </div>` : ""}
-						<input id="searchboxinput" type="text"  style="position: relative;" />
-					<div class="searchbox-searchbutton-container">
-                        <button aria-label="search"  id="searchbox-searchbutton"  class="searchbox-searchbutton"></button> 
-                        <span aria-hidden="true"  style="display:none;">search</span>
-                    </div>
-                    <div class="search-result"></div>
-                </div>
-                `;
+    container.innerHTML = "\n                <div id=\"boxcontainer\" class=\"searchbox searchbox-shadow\" >\n                    ".concat(sideEnabled ? "<div class=\"searchbox-menu-container\">\n                            <button aria-label=\"Menu\" id=\"searchbox-menubutton\" class=\"searchbox-menubutton\"></button> \n                            <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                        </div>" : "", "\n\t\t\t\t\t\t<input id=\"searchboxinput\" type=\"text\"  style=\"position: relative;\" />\n\t\t\t\t\t<div class=\"searchbox-searchbutton-container\">\n                        <button aria-label=\"search\"  id=\"searchbox-searchbutton\"  class=\"searchbox-searchbutton\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"search-result\"></div>\n                </div>\n                ");
     return container;
   },
-  _genResultList: function (result) {
+  _genResultList: function _genResultList(result) {
     var content = '<ul class="result-list">';
 
     for (var i = 0; i < result.length; i++) {
       var item = result[i];
       content += '<li class="result-list-item">';
-      content += `<a href="#" data-x="${item.x}" data-y="${item.y}" data-label="${item.label}" data-class="${item.raw.class}" data-type="${item.raw.type}" data-display_name="${item.raw.display_name}">${item.label}</a>`;
+      content += "<a href=\"#\" data-x=\"".concat(item.x, "\" data-y=\"").concat(item.y, "\" data-label=\"").concat(item.label, "\" data-class=\"").concat(item.raw.class, "\" data-type=\"").concat(item.raw.type, "\" data-display_name=\"").concat(item.raw.display_name, "\">").concat(item.label, "</a>");
       content += '</li>';
     }
 
     content += '</ul>';
     document.querySelector('.search-result').innerHTML = content;
   },
-  _showSearchResult: function () {
-    let self = this;
+  _showSearchResult: function _showSearchResult() {
+    var self = this;
     document.querySelector('.search-result').style.display = 'block';
 
     self._map.once('click', function a(ev) {
       self._hideSearchResult();
     });
   },
-  _hideSearchResult: function () {
+  _hideSearchResult: function _hideSearchResult() {
     document.querySelector('.search-result').style.display = 'none';
   },
-  _clearSearchResult: function () {
+  _clearSearchResult: function _clearSearchResult() {
     document.querySelector('.search-result').innerHTML = '';
   },
-  _suggest: function (query) {
-    let provider = this.provider;
-    let self = this;
+  _suggest: function _suggest(query) {
+    var provider = this.provider;
+    var self = this;
     provider.search({
       query: query
     }).then(r => {
@@ -1538,7 +1576,7 @@ Control.SearchBox = Control.extend({
       self._hideSearchResult();
     });
   },
-  onAdd: function (map) {
+  onAdd: function onAdd(map) {
     this.provider = new Provider$4();
     var container = DomUtil.create('div');
     container.id = "controlcontainer";
@@ -1548,7 +1586,7 @@ Control.SearchBox = Control.extend({
     container.appendChild(this._createControl());
     if (sideEnabled) container.appendChild(this._createPanel(headerTitle, menuItems));
     bean.on(container, 'keyup', "#searchboxinput", debounce_1(e => {
-      let value = e.target.value;
+      var value = e.target.value;
 
       if (value.length === 0) {
         this._clearSearchResult();

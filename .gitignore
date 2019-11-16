@@ -1,5 +1,6 @@
 #### joe made this: http://goel.io/joe
-
+build/
+.cache/
 #### node ####
 # Logs
 logs

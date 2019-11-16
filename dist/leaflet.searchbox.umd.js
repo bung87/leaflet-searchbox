@@ -18,6 +18,28 @@
     return _typeof(obj);
   }
 
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
   function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
@@ -67,16 +89,51 @@
     return target;
   }
 
-  function _inheritsLoose(subClass, superClass) {
-    subClass.prototype = Object.create(superClass.prototype);
-    subClass.prototype.constructor = subClass;
-    subClass.__proto__ = superClass;
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function");
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) _setPrototypeOf(subClass, superClass);
   }
 
-  function _newArrowCheck(innerThis, boundThis) {
-    if (innerThis !== boundThis) {
-      throw new TypeError("Cannot instantiate an arrow function");
+  function _getPrototypeOf(o) {
+    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+      return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return _getPrototypeOf(o);
+  }
+
+  function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+      o.__proto__ = p;
+      return o;
+    };
+
+    return _setPrototypeOf(o, p);
+  }
+
+  function _assertThisInitialized(self) {
+    if (self === void 0) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
+
+    return self;
+  }
+
+  function _possibleConstructorReturn(self, call) {
+    if (call && (typeof call === "object" || typeof call === "function")) {
+      return call;
+    }
+
+    return _assertThisInitialized(self);
   }
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -873,68 +930,64 @@
   function () {
     function Provider() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, Provider);
+
       this.options = options;
     }
 
-    var _proto = Provider.prototype;
+    _createClass(Provider, [{
+      key: "getParamString",
+      value: function getParamString(params) {
+        return Object.keys(params).map(function (key) {
+          return "".concat(encodeURIComponent(key), "=").concat(encodeURIComponent(params[key]));
+        }).join('&');
+      }
+    }, {
+      key: "search",
+      value: function search(_ref) {
+        var query, protocol, url, request, json;
+        return regeneratorRuntime.async(function search$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                query = _ref.query;
+                // eslint-disable-next-line no-bitwise
+                protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
+                url = this.endpoint({
+                  query: query,
+                  protocol: protocol
+                });
+                _context.next = 5;
+                return regeneratorRuntime.awrap(fetch(url));
 
-    _proto.getParamString = function getParamString(params) {
-      var _this = this;
+              case 5:
+                request = _context.sent;
+                _context.next = 8;
+                return regeneratorRuntime.awrap(request.json());
 
-      return Object.keys(params).map(function (key) {
-        _newArrowCheck(this, _this);
+              case 8:
+                json = _context.sent;
+                return _context.abrupt("return", this.parse({
+                  data: json
+                }));
 
-        return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
-      }.bind(this)).join('&');
-    };
-
-    _proto.search = function search(_ref) {
-      var query, protocol, url, request, json;
-      return regeneratorRuntime.async(function search$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              query = _ref.query;
-              // eslint-disable-next-line no-bitwise
-              protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-              url = this.endpoint({
-                query: query,
-                protocol: protocol
-              });
-              _context.next = 5;
-              return regeneratorRuntime.awrap(fetch(url));
-
-            case 5:
-              request = _context.sent;
-              _context.next = 8;
-              return regeneratorRuntime.awrap(request.json());
-
-            case 8:
-              json = _context.sent;
-              return _context.abrupt("return", this.parse({
-                data: json
-              }));
-
-            case 10:
-            case "end":
-              return _context.stop();
+              case 10:
+              case "end":
+                return _context.stop();
+            }
           }
-        }
-      }, null, this);
-    };
+        }, null, this);
+      }
+    }]);
 
     return Provider;
   }();
-
-  var _this = undefined;
 
   /* eslint-disable import/prefer-default-export */
   var createElement = function createElement(element) {
     var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
     var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-    _newArrowCheck(this, _this);
-
     var el = document.createElement(element);
     el.className = classNames;
 
@@ -943,125 +996,102 @@
     }
 
     return el;
-  }.bind(undefined);
+  };
   var createScriptElement = function createScriptElement(url, cb) {
-    var _this2 = this;
-
-    _newArrowCheck(this, _this);
-
     var script = createElement('script', null, document.body);
     script.setAttribute('type', 'text/javascript');
     return new Promise(function (resolve) {
-      var _this3 = this;
-
-      _newArrowCheck(this, _this2);
-
       window[cb] = function (json) {
-        _newArrowCheck(this, _this3);
-
         script.remove();
         delete window[cb];
         resolve(json);
-      }.bind(this);
+      };
 
       script.setAttribute('src', url);
-    }.bind(this));
-  }.bind(undefined);
-  var addClassName = function addClassName(element, className) {
-    _newArrowCheck(this, _this);
-
-    if (element && !element.classList.contains(className)) {
-      element.classList.add(className);
-    }
-  }.bind(undefined);
-  var removeClassName = function removeClassName(element, className) {
-    _newArrowCheck(this, _this);
-
-    if (element && element.classList.contains(className)) {
-      element.classList.remove(className);
-    }
-  }.bind(undefined);
+    });
+  };
 
   var Provider$1 =
   /*#__PURE__*/
   function (_BaseProvider) {
-    _inheritsLoose(Provider$$1, _BaseProvider);
+    _inherits(Provider$$1, _BaseProvider);
 
     function Provider$$1() {
-      return _BaseProvider.apply(this, arguments) || this;
+      _classCallCheck(this, Provider$$1);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Provider$$1).apply(this, arguments));
     }
 
-    var _proto = Provider$$1.prototype;
+    _createClass(Provider$$1, [{
+      key: "endpoint",
+      value: function endpoint() {
+        var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+            query = _ref.query,
+            protocol = _ref.protocol,
+            jsonp = _ref.jsonp;
 
-    _proto.endpoint = function endpoint() {
-      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          query = _ref.query,
-          protocol = _ref.protocol,
-          jsonp = _ref.jsonp;
-
-      var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread2({}, params, {
-        query: query,
-        jsonp: jsonp
-      }));
-      return protocol + "//dev.virtualearth.net/REST/v1/Locations?" + paramString;
-    };
-
-    _proto.parse = function parse(_ref2) {
-      var _this = this;
-
-      var data = _ref2.data;
-
-      if (data.resourceSets.length === 0) {
-        return [];
+        var params = this.options.params;
+        var paramString = this.getParamString(_objectSpread2({}, params, {
+          query: query,
+          jsonp: jsonp
+        }));
+        return "".concat(protocol, "//dev.virtualearth.net/REST/v1/Locations?").concat(paramString);
       }
+    }, {
+      key: "parse",
+      value: function parse(_ref2) {
+        var data = _ref2.data;
 
-      return data.resourceSets[0].resources.map(function (r) {
-        _newArrowCheck(this, _this);
-
-        return {
-          x: r.point.coordinates[1],
-          y: r.point.coordinates[0],
-          label: r.address.formattedAddress,
-          bounds: [[r.bbox[0], r.bbox[1]], // s, w
-          [r.bbox[2], r.bbox[3]] // n, e
-          ],
-          raw: r
-        };
-      }.bind(this));
-    };
-
-    _proto.search = function search(_ref3) {
-      var query, protocol, jsonp, url, json;
-      return regeneratorRuntime.async(function search$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              query = _ref3.query;
-              // eslint-disable-next-line no-bitwise
-              protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-              jsonp = "BING_JSONP_CB_" + Date.now();
-              url = this.endpoint({
-                query: query,
-                protocol: protocol,
-                jsonp: jsonp
-              });
-              _context.next = 6;
-              return regeneratorRuntime.awrap(createScriptElement(url, jsonp));
-
-            case 6:
-              json = _context.sent;
-              return _context.abrupt("return", this.parse({
-                data: json
-              }));
-
-            case 8:
-            case "end":
-              return _context.stop();
-          }
+        if (data.resourceSets.length === 0) {
+          return [];
         }
-      }, null, this);
-    };
+
+        return data.resourceSets[0].resources.map(function (r) {
+          return {
+            x: r.point.coordinates[1],
+            y: r.point.coordinates[0],
+            label: r.address.formattedAddress,
+            bounds: [[r.bbox[0], r.bbox[1]], // s, w
+            [r.bbox[2], r.bbox[3]] // n, e
+            ],
+            raw: r
+          };
+        });
+      }
+    }, {
+      key: "search",
+      value: function search(_ref3) {
+        var query, protocol, jsonp, url, json;
+        return regeneratorRuntime.async(function search$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                query = _ref3.query;
+                // eslint-disable-next-line no-bitwise
+                protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
+                jsonp = "BING_JSONP_CB_".concat(Date.now());
+                url = this.endpoint({
+                  query: query,
+                  protocol: protocol,
+                  jsonp: jsonp
+                });
+                _context.next = 6;
+                return regeneratorRuntime.awrap(createScriptElement(url, jsonp));
+
+              case 6:
+                json = _context.sent;
+                return _context.abrupt("return", this.parse({
+                  data: json
+                }));
+
+              case 8:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, null, this);
+      }
+    }]);
 
     return Provider$$1;
   }(Provider);
@@ -1069,45 +1099,45 @@
   var Provider$2 =
   /*#__PURE__*/
   function (_BaseProvider) {
-    _inheritsLoose(Provider$$1, _BaseProvider);
+    _inherits(Provider$$1, _BaseProvider);
 
     function Provider$$1() {
-      return _BaseProvider.apply(this, arguments) || this;
+      _classCallCheck(this, Provider$$1);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Provider$$1).apply(this, arguments));
     }
 
-    var _proto = Provider$$1.prototype;
+    _createClass(Provider$$1, [{
+      key: "endpoint",
+      value: function endpoint() {
+        var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+            query = _ref.query,
+            protocol = _ref.protocol;
 
-    _proto.endpoint = function endpoint() {
-      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          query = _ref.query,
-          protocol = _ref.protocol;
-
-      var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread2({}, params, {
-        f: 'json',
-        text: query
-      }));
-      return protocol + "//geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find?" + paramString;
-    };
-
-    _proto.parse = function parse(_ref2) {
-      var _this = this;
-
-      var data = _ref2.data;
-      return data.locations.map(function (r) {
-        _newArrowCheck(this, _this);
-
-        return {
-          x: r.feature.geometry.x,
-          y: r.feature.geometry.y,
-          label: r.name,
-          bounds: [[r.extent.ymin, r.extent.xmin], // s, w
-          [r.extent.ymax, r.extent.xmax] // n, e
-          ],
-          raw: r
-        };
-      }.bind(this));
-    };
+        var params = this.options.params;
+        var paramString = this.getParamString(_objectSpread2({}, params, {
+          f: 'json',
+          text: query
+        }));
+        return "".concat(protocol, "//geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find?").concat(paramString);
+      }
+    }, {
+      key: "parse",
+      value: function parse(_ref2) {
+        var data = _ref2.data;
+        return data.locations.map(function (r) {
+          return {
+            x: r.feature.geometry.x,
+            y: r.feature.geometry.y,
+            label: r.name,
+            bounds: [[r.extent.ymin, r.extent.xmin], // s, w
+            [r.extent.ymax, r.extent.xmax] // n, e
+            ],
+            raw: r
+          };
+        });
+      }
+    }]);
 
     return Provider$$1;
   }(Provider);
@@ -1115,46 +1145,46 @@
   var Provider$3 =
   /*#__PURE__*/
   function (_BaseProvider) {
-    _inheritsLoose(Provider$$1, _BaseProvider);
+    _inherits(Provider$$1, _BaseProvider);
 
     function Provider$$1() {
-      return _BaseProvider.apply(this, arguments) || this;
+      _classCallCheck(this, Provider$$1);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Provider$$1).apply(this, arguments));
     }
 
-    var _proto = Provider$$1.prototype;
+    _createClass(Provider$$1, [{
+      key: "endpoint",
+      value: function endpoint() {
+        var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+            query = _ref.query,
+            protocol = _ref.protocol;
 
-    _proto.endpoint = function endpoint() {
-      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          query = _ref.query,
-          protocol = _ref.protocol;
+        var params = this.options.params;
+        var paramString = this.getParamString(_objectSpread2({}, params, {
+          address: query
+        })); // google requires a secure connection when using api keys
 
-      var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread2({}, params, {
-        address: query
-      })); // google requires a secure connection when using api keys
-
-      var proto = params && params.key ? 'https:' : protocol;
-      return proto + "//maps.googleapis.com/maps/api/geocode/json?" + paramString;
-    };
-
-    _proto.parse = function parse(_ref2) {
-      var _this = this;
-
-      var data = _ref2.data;
-      return data.results.map(function (r) {
-        _newArrowCheck(this, _this);
-
-        return {
-          x: r.geometry.location.lng,
-          y: r.geometry.location.lat,
-          label: r.formatted_address,
-          bounds: [[r.geometry.viewport.southwest.lat, r.geometry.viewport.southwest.lng], // s, w
-          [r.geometry.viewport.northeast.lat, r.geometry.viewport.northeast.lng] // n, e
-          ],
-          raw: r
-        };
-      }.bind(this));
-    };
+        var proto = params && params.key ? 'https:' : protocol;
+        return "".concat(proto, "//maps.googleapis.com/maps/api/geocode/json?").concat(paramString);
+      }
+    }, {
+      key: "parse",
+      value: function parse(_ref2) {
+        var data = _ref2.data;
+        return data.results.map(function (r) {
+          return {
+            x: r.geometry.location.lng,
+            y: r.geometry.location.lat,
+            label: r.formatted_address,
+            bounds: [[r.geometry.viewport.southwest.lat, r.geometry.viewport.southwest.lng], // s, w
+            [r.geometry.viewport.northeast.lat, r.geometry.viewport.northeast.lng] // n, e
+            ],
+            raw: r
+          };
+        });
+      }
+    }]);
 
     return Provider$$1;
   }(Provider);
@@ -1162,104 +1192,107 @@
   var Provider$4 =
   /*#__PURE__*/
   function (_BaseProvider) {
-    _inheritsLoose(Provider$$1, _BaseProvider);
+    _inherits(Provider$$1, _BaseProvider);
 
     function Provider$$1() {
-      return _BaseProvider.apply(this, arguments) || this;
+      _classCallCheck(this, Provider$$1);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Provider$$1).apply(this, arguments));
     }
 
-    var _proto = Provider$$1.prototype;
+    _createClass(Provider$$1, [{
+      key: "endpoint",
+      value: function endpoint() {
+        var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+            query = _ref.query;
 
-    _proto.endpoint = function endpoint() {
-      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          query = _ref.query;
+        var params = this.options.params;
+        var paramString = this.getParamString(_objectSpread2({}, params, {
+          format: 'json',
+          q: query
+        }));
+        return "https://nominatim.openstreetmap.org/search?".concat(paramString);
+      }
+    }, {
+      key: "endpointReverse",
+      value: function endpointReverse() {
+        var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+            data = _ref2.data;
 
-      var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread2({}, params, {
-        format: 'json',
-        q: query
-      }));
-      return "https://nominatim.openstreetmap.org/search?" + paramString;
-    };
+        var params = this.options.params;
+        var paramString = this.getParamString(_objectSpread2({}, params, {
+          format: 'json',
+          // eslint-disable-next-line camelcase
+          osm_id: data.raw.osm_id,
+          // eslint-disable-next-line camelcase
+          osm_type: this.translateOsmType(data.raw.osm_type)
+        }));
+        return "https://nominatim.openstreetmap.org/reverse?".concat(paramString);
+      }
+    }, {
+      key: "parse",
+      value: function parse(_ref3) {
+        var data = _ref3.data;
+        return data.map(function (r) {
+          return {
+            x: r.lon,
+            y: r.lat,
+            label: r.display_name,
+            bounds: [[parseFloat(r.boundingbox[0]), parseFloat(r.boundingbox[2])], // s, w
+            [parseFloat(r.boundingbox[1]), parseFloat(r.boundingbox[3])] // n, e
+            ],
+            raw: r
+          };
+        });
+      }
+    }, {
+      key: "search",
+      value: function search(_ref4) {
+        var query, data, protocol, url, request, json;
+        return regeneratorRuntime.async(function search$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                query = _ref4.query, data = _ref4.data;
+                // eslint-disable-next-line no-bitwise
+                protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
+                url = data ? this.endpointReverse({
+                  data: data,
+                  protocol: protocol
+                }) : this.endpoint({
+                  query: query,
+                  protocol: protocol
+                });
+                _context.next = 5;
+                return regeneratorRuntime.awrap(fetch(url));
 
-    _proto.endpointReverse = function endpointReverse() {
-      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          data = _ref2.data;
+              case 5:
+                request = _context.sent;
+                _context.next = 8;
+                return regeneratorRuntime.awrap(request.json());
 
-      var params = this.options.params;
-      var paramString = this.getParamString(_objectSpread2({}, params, {
-        format: 'json',
-        // eslint-disable-next-line camelcase
-        osm_id: data.raw.osm_id,
-        // eslint-disable-next-line camelcase
-        osm_type: this.translateOsmType(data.raw.osm_type)
-      }));
-      return "https://nominatim.openstreetmap.org/reverse?" + paramString;
-    };
+              case 8:
+                json = _context.sent;
+                return _context.abrupt("return", this.parse({
+                  data: data ? [json] : json
+                }));
 
-    _proto.parse = function parse(_ref3) {
-      var _this = this;
-
-      var data = _ref3.data;
-      return data.map(function (r) {
-        _newArrowCheck(this, _this);
-
-        return {
-          x: r.lon,
-          y: r.lat,
-          label: r.display_name,
-          bounds: [[parseFloat(r.boundingbox[0]), parseFloat(r.boundingbox[2])], // s, w
-          [parseFloat(r.boundingbox[1]), parseFloat(r.boundingbox[3])] // n, e
-          ],
-          raw: r
-        };
-      }.bind(this));
-    };
-
-    _proto.search = function search(_ref4) {
-      var query, data, protocol, url, request, json;
-      return regeneratorRuntime.async(function search$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              query = _ref4.query, data = _ref4.data;
-              // eslint-disable-next-line no-bitwise
-              protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-              url = data ? this.endpointReverse({
-                data: data,
-                protocol: protocol
-              }) : this.endpoint({
-                query: query,
-                protocol: protocol
-              });
-              _context.next = 5;
-              return regeneratorRuntime.awrap(fetch(url));
-
-            case 5:
-              request = _context.sent;
-              _context.next = 8;
-              return regeneratorRuntime.awrap(request.json());
-
-            case 8:
-              json = _context.sent;
-              return _context.abrupt("return", this.parse({
-                data: data ? [json] : json
-              }));
-
-            case 10:
-            case "end":
-              return _context.stop();
+              case 10:
+              case "end":
+                return _context.stop();
+            }
           }
-        }
-      }, null, this);
-    };
-
-    _proto.translateOsmType = function translateOsmType(type) {
-      if (type === 'node') return 'N';
-      if (type === 'way') return 'W';
-      if (type === 'relation') return 'R';
-      return ''; // Unknown
-    };
+        }, null, this);
+      }
+    }, {
+      key: "translateOsmType",
+      value: function translateOsmType(type) {
+        if (type === 'node') return 'N';
+        if (type === 'way') return 'W';
+        if (type === 'relation') return 'R';
+        return ''; // Unknown
+      }
+    }]);
 
     return Provider$$1;
   }(Provider);
@@ -1793,7 +1826,7 @@
     },
     _createPanel: function _createPanel(headerTitle, menuItems) {
       var container = L.DomUtil.create('div', 'panel');
-      container.innerHTML = "\n        <div class=\"panel-header\">\n            <div class=\"panel-header-container\">\n                <span class=\"panel-header-title\">" + headerTitle + "</span>\n                <button aria-label=\"Menu\" id=\"panelbutton\" class=\"panel-close-button\"></button>\n            </div>\n        </div>\n        ";
+      container.innerHTML = "\n        <div class=\"panel-header\">\n            <div class=\"panel-header-container\">\n                <span class=\"panel-header-title\">".concat(headerTitle, "</span>\n                <button aria-label=\"Menu\" id=\"panelbutton\" class=\"panel-close-button\"></button>\n            </div>\n        </div>\n        ");
       container.appendChild(this._createPanelContent(menuItems));
       return container;
     },
@@ -1803,7 +1836,7 @@
       var sideEnabled = headerTitle && menuItems;
       var container = L.DomUtil.create('div');
       container.id = 'controlbox';
-      container.innerHTML = "\n                <div id=\"boxcontainer\" class=\"searchbox searchbox-shadow\" >\n                    " + (sideEnabled ? "<div class=\"searchbox-menu-container\">\n                            <button aria-label=\"Menu\" id=\"searchbox-menubutton\" class=\"searchbox-menubutton\"></button> \n                            <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                        </div>" : "") + "\n\t\t\t\t\t\t<input id=\"searchboxinput\" type=\"text\"  style=\"position: relative;\" />\n\t\t\t\t\t<div class=\"searchbox-searchbutton-container\">\n                        <button aria-label=\"search\"  id=\"searchbox-searchbutton\"  class=\"searchbox-searchbutton\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"search-result\"></div>\n                </div>\n                ";
+      container.innerHTML = "\n                <div id=\"boxcontainer\" class=\"searchbox searchbox-shadow\" >\n                    ".concat(sideEnabled ? "<div class=\"searchbox-menu-container\">\n                            <button aria-label=\"Menu\" id=\"searchbox-menubutton\" class=\"searchbox-menubutton\"></button> \n                            <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                        </div>" : "", "\n\t\t\t\t\t\t<input id=\"searchboxinput\" type=\"text\"  style=\"position: relative;\" />\n\t\t\t\t\t<div class=\"searchbox-searchbutton-container\">\n                        <button aria-label=\"search\"  id=\"searchbox-searchbutton\"  class=\"searchbox-searchbutton\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"search-result\"></div>\n                </div>\n                ");
       return container;
     },
     _genResultList: function _genResultList(result) {
@@ -1812,7 +1845,7 @@
       for (var i = 0; i < result.length; i++) {
         var item = result[i];
         content += '<li class="result-list-item">';
-        content += "<a href=\"#\" data-x=\"" + item.x + "\" data-y=\"" + item.y + "\" data-label=\"" + item.label + "\" data-class=\"" + item.raw.class + "\" data-type=\"" + item.raw.type + "\" data-display_name=\"" + item.raw.display_name + "\">" + item.label + "</a>";
+        content += "<a href=\"#\" data-x=\"".concat(item.x, "\" data-y=\"").concat(item.y, "\" data-label=\"").concat(item.label, "\" data-class=\"").concat(item.raw.class, "\" data-type=\"").concat(item.raw.type, "\" data-display_name=\"").concat(item.raw.display_name, "\">").concat(item.label, "</a>");
         content += '</li>';
       }
 
@@ -1834,26 +1867,22 @@
       document.querySelector('.search-result').innerHTML = '';
     },
     _suggest: function _suggest(query) {
-      var _this = this;
-
       var provider = this.provider;
       var self = this;
       provider.search({
         query: query
       }).then(function (r) {
-        _newArrowCheck(this, _this);
-
         self._genResultList(r);
 
         self._showSearchResult();
-      }.bind(this));
+      });
 
       self._map.once('click', function a(ev) {
         self._hideSearchResult();
       });
     },
     onAdd: function onAdd(map) {
-      var _this2 = this;
+      var _this = this;
 
       this.provider = new Provider$4();
       var container = L.DomUtil.create('div');
@@ -1864,32 +1893,26 @@
       container.appendChild(this._createControl());
       if (sideEnabled) container.appendChild(this._createPanel(headerTitle, menuItems));
       bean.on(container, 'keyup', "#searchboxinput", debounce_1(function (e) {
-        _newArrowCheck(this, _this2);
-
         var value = e.target.value;
 
         if (value.length === 0) {
-          this._clearSearchResult();
+          _this._clearSearchResult();
         }
 
         if (value.length < 2) {
           return;
         }
 
-        this._suggest(value);
-      }.bind(this), 300));
+        _this._suggest(value);
+      }, 300));
       bean.on(container, 'click', "#searchboxinput", function (e) {
-        _newArrowCheck(this, _this2);
-
-        this._showSearchResult();
-      }.bind(this));
+        _this._showSearchResult();
+      });
       bean.on(container, 'click', "#searchbox-searchbutton", debounce_1(function () {
-        _newArrowCheck(this, _this2);
-
         var value = document.querySelector("#searchboxinput").value;
 
-        this._suggest(value);
-      }.bind(this), 300, {
+        _this._suggest(value);
+      }, 300, {
         'leading': true,
         'trailing': false
       }));
@@ -1906,8 +1929,6 @@
       }
 
       bean.on(container, 'click', '.result-list-item a', function (e) {
-        _newArrowCheck(this, _this2);
-
         e.preventDefault(); // lat lng
 
         var location = L.latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
@@ -1918,8 +1939,8 @@
           }, e.target.dataset)
         });
 
-        this._hideSearchResult();
-      }.bind(this));
+        _this._hideSearchResult();
+      });
       L.DomEvent.disableClickPropagation(container);
       return container;
     }
