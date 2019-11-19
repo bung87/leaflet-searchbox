@@ -27,7 +27,8 @@ function generateHtmlContent(menuItems) {
 
 L.Control.SearchBox = L.Control.extend({
     options: {
-        position: 'topleft'
+        position: 'topleft',
+        provider:new OpenStreetMapProvider()
     },
     initialize: function (options) {
         L.Util.setOptions(this, options);
@@ -47,12 +48,12 @@ L.Control.SearchBox = L.Control.extend({
         return container;
     },
     _createPanel: function (headerTitle, menuItems) {
-        var container = L.DomUtil.create('div', 'leaflet-searchbox-panel');
+        var container = L.DomUtil.create('div', 'leaflet-searchbox-panel leaflet-searchbox-control-shadow');
         container.innerHTML = `
         <div class="leaflet-searchbox-panel-header">
             <div class="leaflet-searchbox-panel-header-container">
                 <span class="leaflet-searchbox-panel-header-title">${headerTitle}</span>
-                <button aria-label="Menu" id="panelbutton" class="leaflet-searchbox-panel-close-button"></button>
+                <button aria-label="Menu" class="leaflet-searchbox-panel-close-button"></button>
             </div>
         </div>
         `
@@ -62,9 +63,8 @@ L.Control.SearchBox = L.Control.extend({
     _createControl: function () {
         var headerTitle = this._sideBarHeaderTitle;
         var menuItems = this._sideBarMenuItems;
-        var sideEnabled = headerTitle && menuItems;
+        var sideEnabled = headerTitle || menuItems;
         var container = L.DomUtil.create('div',"leaflet-searchbox-control");
-        // container.id = 'controlbox'
         container.innerHTML = `
                 <div  class="leaflet-searchbox-control-container leaflet-searchbox-control-shadow" >
                     ${sideEnabled ?
@@ -92,38 +92,36 @@ L.Control.SearchBox = L.Control.extend({
             content += '</li>'
         }
         content += '</ul>'
-        document.querySelector('.leaflet-searchbox-control-search-result').innerHTML = content
+        this.getContainer().querySelector('.leaflet-searchbox-control-search-result').innerHTML = content
     },
     _showSearchResult: function () {
-        let self = this;
-        document.querySelector('.leaflet-searchbox-control-search-result').style.display = 'block';
-        self._map.once('click', function a(ev) {
-            self._hideSearchResult();
+        this.getContainer().querySelector('.leaflet-searchbox-control-search-result').style.display = 'block';
+        this._map.once('click', (ev) => {
+            this._hideSearchResult();
         });
     },
     _hideSearchResult: function () {
-        document.querySelector('.leaflet-searchbox-control-search-result').style.display = 'none';
+        this.getContainer().querySelector('.leaflet-searchbox-control-search-result').style.display = 'none';
     },
     _clearSearchResult: function () {
-        document.querySelector('.leaflet-searchbox-control-search-result').innerHTML = '';
+        this.getContainer().querySelector('.leaflet-searchbox-control-search-result').innerHTML = '';
     },
     _suggest: function (query) {
-        let provider = this.provider;
-        let self = this;
+        let provider = this.options.provider;
         provider.search({ query: query })
             .then((r) => {
-                self._genResultList(r);
-                self._showSearchResult();
+                this._genResultList(r);
+                this._showSearchResult();
             });
 
-        self._map.once('click', function a(ev) {
-            self._hideSearchResult();
+        this._map.once('click', function a(ev) {
+            this._hideSearchResult();
         });
     },
     onAdd: function (map) {
-        this.provider = new OpenStreetMapProvider();
-        var container = L.DomUtil.create('div');
-        // container.id = "controlcontainer";
+
+        this.options.provider = new OpenStreetMapProvider();
+        var container = L.DomUtil.create('div',"leaflet-searchbox-control-wrapper");
         var headerTitle = this._sideBarHeaderTitle;
         var menuItems = this._sideBarMenuItems;
         var sideEnabled = headerTitle && menuItems;
@@ -150,7 +148,7 @@ L.Control.SearchBox = L.Control.extend({
         });
 
         bean.on(container, 'click', ".leaflet-searchbox-control-search-button", debounce(() => {
-            var value = document.querySelector(".leaflet-searchbox-control-input").value;
+            var value = this.getContainer().querySelector(".leaflet-searchbox-control-input").value;
             this._suggest(value);
         }, 300, {
                 'leading': true,
@@ -158,13 +156,14 @@ L.Control.SearchBox = L.Control.extend({
             }));
 
         if (sideEnabled) {
-            bean.on(container, 'click', ".leaflet-searchbox-control-menu-button", function () {
-                var panel = document.querySelector('.leaflet-searchbox-panel');
+            bean.on(container, 'click', ".leaflet-searchbox-control-menu-button",  (e) => {
+                var panel = this.getContainer().querySelector('.leaflet-searchbox-panel');
                 panel.style.left = '0px';
+                
             });
-            bean.on(container, 'click', ".leaflet-searchbox-panel-close-button", function () {
-                var panel = document.querySelector('.leaflet-searchbox-panel');
-                panel.style.left = '-300px';
+            bean.on(container, 'click', ".leaflet-searchbox-panel-close-button",  (e) => {
+                var panel = this.getContainer().querySelector('.leaflet-searchbox-panel');
+                panel.style.left = `-100%`;
             });
         }
 

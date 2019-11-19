@@ -29,7 +29,10 @@ textarea::-moz-focus-inner {
   padding: 0;
   border: 0;
 }
-
+.leaflet-control.leaflet-searchbox-control-wrapper{
+    margin-left:0;
+    margin-top:0;
+}
 .leaflet-searchbox-control {
   position: absolute;
   left: 0px;
@@ -149,10 +152,9 @@ textarea::-moz-focus-inner {
     height: 550px;
     background: white;
     position: relative;
-    /* display:none; */
     transition-property: left;
     transition-duration: 0.5s;
-    left: -300px;
+    left:-100%;
     &-header {
       display: table;
       &-container {
