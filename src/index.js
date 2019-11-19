@@ -38,12 +38,25 @@ function resultItemClickCallback(e) {
     });
     this._hideSearchResult();
 }
+function suggest (query) {
+    let provider = this.options.provider;
+    provider.search({ query: query })
+        .then((r) => {
+            this._genResultList(r);
+            this._showSearchResult();
+        });
+
+    this._map.once('click', function a(ev) {
+        this._hideSearchResult();
+    });
+}
 
 L.Control.SearchBox = L.Control.extend({
     options: {
         position: 'topleft',
         provider: new OpenStreetMapProvider(),
-        resultItemClickCallback:resultItemClickCallback
+        resultItemClickCallback:resultItemClickCallback,
+        suggest:suggest
     },
     initialize: function (options) {
         L.Util.setOptions(this, options);
@@ -122,18 +135,18 @@ L.Control.SearchBox = L.Control.extend({
     _clearSearchResult: function () {
         this.getContainer().querySelector('.leaflet-searchbox-control-search-result').innerHTML = '';
     },
-    _suggest: function (query) {
-        let provider = this.options.provider;
-        provider.search({ query: query })
-            .then((r) => {
-                this._genResultList(r);
-                this._showSearchResult();
-            });
+    // _suggest: function (query) {
+    //     let provider = this.options.provider;
+    //     provider.search({ query: query })
+    //         .then((r) => {
+    //             this._genResultList(r);
+    //             this._showSearchResult();
+    //         });
 
-        this._map.once('click', function a(ev) {
-            this._hideSearchResult();
-        });
-    },
+    //     this._map.once('click', function a(ev) {
+    //         this._hideSearchResult();
+    //     });
+    // },
     onAdd: function (map) {
         this.options.provider = new OpenStreetMapProvider();
         var container = L.DomUtil.create('div', "leaflet-searchbox-control-wrapper");
@@ -155,7 +168,7 @@ L.Control.SearchBox = L.Control.extend({
                 if (value.length < 2) {
                     return;
                 }
-                this._suggest(value)
+                this.options.suggest.bind(this)(value)
             }, 300)
         );
         bean.on(container, 'click', ".leaflet-searchbox-control-input", (e) => {
@@ -164,7 +177,7 @@ L.Control.SearchBox = L.Control.extend({
 
         bean.on(container, 'click', ".leaflet-searchbox-control-search-button", debounce(() => {
             var value = this.getContainer().querySelector(".leaflet-searchbox-control-input").value;
-            this._suggest(value);
+            this.options.suggest.bind(this)(value);
         }, 300, {
             'leading': true,
             'trailing': false
