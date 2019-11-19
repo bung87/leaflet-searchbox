@@ -34,9 +34,16 @@ export default [
 			resolve(),
 			commonjs(),
 			babel({
+				babelrc:false,
 				exclude: "node_modules/**",
 				"presets": [
-					["@babel/preset-env"]
+					["@babel/preset-env", {
+						useBuiltIns: "usage",
+    					corejs: 3, // or 2,
+						"targets": {
+							"browsers": ["last 2 Chrome versions"]
+						}
+					}]
 				],
 			})
 		]
@@ -51,6 +58,7 @@ export default [
 			resolve(),
 			commonjs({ namedExports: { 'node_modules/bean/bean.js': ['bean'] } }),
 			babel({
+				
 				exclude: "node_modules/**",
 				"presets": [
 					[
@@ -76,7 +84,7 @@ export default [
 			postcss({
 
 			}),
-			resolve(), 
+			resolve(),
 			commonjs({ namedExports: { 'node_modules/bean/bean.js': ['bean'] } }),
 			babel({
 				exclude: "node_modules/**",

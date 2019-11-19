@@ -1,6 +1,17 @@
 #### joe made this: http://goel.io/joe
-build/
+# yo
+.yo-rc.json
+
+# misc
+.DS_Store
+
+# builds
+build
+.rpt2_cache
+
+# parcel cache
 .cache/
+
 #### node ####
 # Logs
 logs

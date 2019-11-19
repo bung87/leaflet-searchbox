@@ -1,4 +1,4 @@
-import { Control, Util, DomUtil, latLng, DomEvent } from 'leaflet';
+import { latLng, Control, Util, DomUtil, DomEvent, control } from 'leaflet';
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -1358,18 +1358,20 @@ function debounce(func, wait, options) {
 
 var debounce_1 = debounce;
 
+var template = require('lodash.template');
+
 function generateHtmlContent(menuItems) {
-  var content = '<ul class="panel-list">';
+  var content = '<ul class="leaflet-searchbox-panel-list">';
 
   for (var i = 0; i < menuItems.Items.length; i++) {
     var item = menuItems.Items[i];
-    content += '<li class="panel-list-item"><div>';
+    content += '<li class="leaflet-searchbox-panel-list-item"><div>';
 
     if (item.type == 'link') {
-      content += '<span class=\"panel-list-item-icon ' + item.icon + '\" ></span>';
+      content += '<span class=\"leaflet-searchbox-panel-list-item-icon ' + item.icon + '\" ></span>';
       content += '<a href=\"' + item.href + '\">' + item.name + '</a>';
     } else if (item.type == 'button') {
-      content += '<span class=\"panel-list-item-icon ' + item.icon + '\" ></span>';
+      content += '<span class=\"leaflet-searchbox-panel-list-item-icon ' + item.icon + '\" ></span>';
       content += '<button onclick=\"' + item.onclick + '\">' + item.name + '</button>';
     }
 
@@ -1380,9 +1382,44 @@ function generateHtmlContent(menuItems) {
   return content;
 }
 
+function resultItemClickCallback(e) {
+  e.preventDefault(); // lat lng
+
+  var location = latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+
+  this._map.panTo(location);
+
+  this._map.fireEvent('geosearch/showlocation', {
+    location: _objectSpread2({
+      latlng: location
+    }, e.target.dataset)
+  });
+
+  this._hideSearchResult();
+}
+
+function suggest(query) {
+  var provider = this.options.provider;
+  provider.search({
+    query: query
+  }).then(r => {
+    this._genResultList(r);
+
+    this._showSearchResult();
+  });
+
+  this._map.once('click', function a(ev) {
+    this._hideSearchResult();
+  });
+}
+
 Control.SearchBox = Control.extend({
   options: {
-    position: 'topleft'
+    position: 'topleft',
+    provider: new Provider$4(),
+    resultItemClickCallback: resultItemClickCallback,
+    suggest: suggest,
+    resultItemTemplate: "<a href=\"#\" data-x=\"<%- item.x %>\" \n        data-y=\"<%- item.y %>\" \n        data-label=\"<%- item.label %>\" \n        data-class=\"<%- item.raw.class %>\" data-type=\"<%- item.raw.type %>\" data-display_name=\"<%-item.raw.display_name%>\"><%- item.label %></a>"
   },
   initialize: function initialize(options) {
     Util.setOptions(this, options);
@@ -1395,79 +1432,60 @@ Control.SearchBox = Control.extend({
       this._sideBarMenuItems = options.sidebarMenuItems;
     }
   },
+
+  _isSideEnabled() {
+    return this._sideBarHeaderTitle || this._sideBarMenuItems;
+  },
+
   _createPanelContent: function _createPanelContent(menuItems) {
-    var container = DomUtil.create('div', 'panel-content');
+    var container = DomUtil.create('div', 'leaflet-searchbox-panel-content');
     var htmlContent = generateHtmlContent(menuItems);
     container.innerHTML = htmlContent;
     return container;
   },
   _createPanel: function _createPanel(headerTitle, menuItems) {
-    var container = DomUtil.create('div', 'panel');
-    container.innerHTML = "\n        <div class=\"panel-header\">\n            <div class=\"panel-header-container\">\n                <span class=\"panel-header-title\">".concat(headerTitle, "</span>\n                <button aria-label=\"Menu\" id=\"panelbutton\" class=\"panel-close-button\"></button>\n            </div>\n        </div>\n        ");
+    var container = DomUtil.create('div', 'leaflet-searchbox-panel leaflet-searchbox-control-shadow');
+    container.innerHTML = "\n        <div class=\"leaflet-searchbox-panel-header\">\n            <div class=\"leaflet-searchbox-panel-header-container\">\n                <span class=\"leaflet-searchbox-panel-header-title\">".concat(headerTitle, "</span>\n                <button aria-label=\"Menu\" class=\"leaflet-searchbox-panel-close-button\"></button>\n            </div>\n        </div>\n        ");
     container.appendChild(this._createPanelContent(menuItems));
     return container;
   },
   _createControl: function _createControl() {
-    var headerTitle = this._sideBarHeaderTitle;
-    var menuItems = this._sideBarMenuItems;
-    var sideEnabled = headerTitle && menuItems;
-    var container = DomUtil.create('div');
-    container.id = 'controlbox';
-    container.innerHTML = "\n                <div id=\"boxcontainer\" class=\"searchbox searchbox-shadow\" >\n                    ".concat(sideEnabled ? "<div class=\"searchbox-menu-container\">\n                            <button aria-label=\"Menu\" id=\"searchbox-menubutton\" class=\"searchbox-menubutton\"></button> \n                            <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                        </div>" : "", "\n\t\t\t\t\t\t<input id=\"searchboxinput\" type=\"text\"  style=\"position: relative;\" />\n\t\t\t\t\t<div class=\"searchbox-searchbutton-container\">\n                        <button aria-label=\"search\"  id=\"searchbox-searchbutton\"  class=\"searchbox-searchbutton\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"search-result\"></div>\n                </div>\n                ");
+    var sideEnabled = this._isSideEnabled();
+
+    var container = DomUtil.create('div', "leaflet-searchbox-control");
+    container.innerHTML = "\n                <div  class=\"leaflet-searchbox-control-container leaflet-searchbox-control-shadow\" >\n                    ".concat(sideEnabled ? "<div class=\"leaflet-searchbox-control-menu-container\">\n                            <button aria-label=\"Menu\" class=\"leaflet-searchbox-control-menu-button\"></button> \n                            <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                        </div>" : "", "\n\t\t\t\t\t\t<input class=\"leaflet-searchbox-control-input\" type=\"text\"  />\n\t\t\t\t\t<div class=\"leaflet-searchbox-control-search-container\">\n                        <button aria-label=\"search\"  class=\"leaflet-searchbox-control-search-button\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"leaflet-searchbox-control-search-result\"></div>\n                </div>\n                ");
     return container;
   },
   _genResultList: function _genResultList(result) {
-    var content = '<ul class="result-list">';
-
-    for (var i = 0; i < result.length; i++) {
-      var item = result[i];
-      content += '<li class="result-list-item">';
-      content += "<a href=\"#\" data-x=\"".concat(item.x, "\" data-y=\"").concat(item.y, "\" data-label=\"").concat(item.label, "\" data-class=\"").concat(item.raw.class, "\" data-type=\"").concat(item.raw.type, "\" data-display_name=\"").concat(item.raw.display_name, "\">").concat(item.label, "</a>");
-      content += '</li>';
-    }
-
-    content += '</ul>';
-    document.querySelector('.search-result').innerHTML = content;
+    var list = "<ul class=\"leaflet-searchbox-result-list\"><% result.forEach( function(item) { %>\n            <li class=\"leaflet-searchbox-result-list-item\">".concat(this.options.resultItemTemplate, "</li>\n            <% }); %></ul>");
+    this.getContainer().querySelector('.leaflet-searchbox-control-search-result').innerHTML = template(list)({
+      result
+    });
   },
   _showSearchResult: function _showSearchResult() {
-    var self = this;
-    document.querySelector('.search-result').style.display = 'block';
+    this.getContainer().querySelector('.leaflet-searchbox-control-search-result').style.display = 'block';
 
-    self._map.once('click', function a(ev) {
-      self._hideSearchResult();
+    this._map.once('click', ev => {
+      this._hideSearchResult();
     });
   },
   _hideSearchResult: function _hideSearchResult() {
-    document.querySelector('.search-result').style.display = 'none';
+    this.getContainer().querySelector('.leaflet-searchbox-control-search-result').style.display = 'none';
   },
   _clearSearchResult: function _clearSearchResult() {
-    document.querySelector('.search-result').innerHTML = '';
-  },
-  _suggest: function _suggest(query) {
-    var provider = this.provider;
-    var self = this;
-    provider.search({
-      query: query
-    }).then(r => {
-      self._genResultList(r);
-
-      self._showSearchResult();
-    });
-
-    self._map.once('click', function a(ev) {
-      self._hideSearchResult();
-    });
+    this.getContainer().querySelector('.leaflet-searchbox-control-search-result').innerHTML = '';
   },
   onAdd: function onAdd(map) {
-    this.provider = new Provider$4();
-    var container = DomUtil.create('div');
-    container.id = "controlcontainer";
+    this.options.provider = new Provider$4();
+    var container = DomUtil.create('div', "leaflet-searchbox-control-wrapper");
     var headerTitle = this._sideBarHeaderTitle;
     var menuItems = this._sideBarMenuItems;
-    var sideEnabled = headerTitle && menuItems;
+
+    var sideEnabled = this._isSideEnabled();
+
     container.appendChild(this._createControl());
     if (sideEnabled) container.appendChild(this._createPanel(headerTitle, menuItems));
-    bean.on(container, 'keyup', "#searchboxinput", debounce_1(e => {
+    bean.on(container, 'keyup', ".leaflet-searchbox-control-input", debounce_1(e => {
       var value = e.target.value;
 
       if (value.length === 0) {
@@ -1478,48 +1496,40 @@ Control.SearchBox = Control.extend({
         return;
       }
 
-      this._suggest(value);
+      this.options.suggest.bind(this)(value);
     }, 300));
-    bean.on(container, 'click', "#searchboxinput", e => {
+    bean.on(container, 'click', ".leaflet-searchbox-control-input", e => {
       this._showSearchResult();
     });
-    bean.on(container, 'click', "#searchbox-searchbutton", debounce_1(() => {
-      var value = document.querySelector("#searchboxinput").value;
-
-      this._suggest(value);
+    bean.on(container, 'click', ".leaflet-searchbox-control-search-button", debounce_1(() => {
+      var value = this.getContainer().querySelector(".leaflet-searchbox-control-input").value;
+      this.options.suggest.bind(this)(value);
     }, 300, {
       'leading': true,
       'trailing': false
     }));
 
     if (sideEnabled) {
-      bean.on(container, 'click', "#searchbox-menubutton", function () {
-        var panel = document.querySelector('.panel');
+      bean.on(container, 'click', ".leaflet-searchbox-control-menu-button", e => {
+        var panel = this.getContainer().querySelector('.leaflet-searchbox-panel');
         panel.style.left = '0px';
       });
-      bean.on(container, 'click', ".panel-close-button", function () {
-        var panel = document.querySelector('.panel');
-        panel.style.left = '-300px';
+      bean.on(container, 'click', ".leaflet-searchbox-panel-close-button", e => {
+        var panel = this.getContainer().querySelector('.leaflet-searchbox-panel');
+        panel.style.left = "-100%";
       });
     }
 
-    bean.on(container, 'click', '.result-list-item a', e => {
-      e.preventDefault(); // lat lng
-
-      var location = latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
-      map.panTo(location);
-      map.fireEvent('geosearch/showlocation', {
-        location: _objectSpread2({
-          latlng: location
-        }, e.target.dataset)
-      });
-
-      this._hideSearchResult();
-    });
+    bean.on(container, 'click', '.leaflet-searchbox-result-list-item a', this.options.resultItemClickCallback.bind(this));
     DomEvent.disableClickPropagation(container);
     return container;
   }
 });
+
+control.searchbox = function (options) {
+  return new Control.SearchBox(options);
+};
+
 var index = Control.SearchBox;
 
 export default index;

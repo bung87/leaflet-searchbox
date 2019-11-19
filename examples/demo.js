@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
-import SearchBox from '../dist/leaflet.searchbox.esm.js'
-import '../dist/style.css';
 import 'leaflet/dist/leaflet.css';
+import '../src/index.js'
+import '../src/style.scss';
 import marker from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import marker2x from 'leaflet/dist/images/marker-icon-2x.png'
@@ -14,11 +14,11 @@ function button2_click() {
 var map = L.map('map').setView([51.505, -0.09], 5);
 map.zoomControl.setPosition('topright');
 map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    { attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors' }
+    { attribution: 'Map data <a href="http://openstreetmap.org">OpenStreetMap</a> contributors' }
 ));
 
 
-var control = new SearchBox({
+var control = L.control.searchbox({
     // remove these if dont need sidebar
     sidebarTitleText: 'Header',
     sidebarMenuItems: {

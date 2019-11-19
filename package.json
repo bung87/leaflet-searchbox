@@ -1,6 +1,6 @@
 {
   "name": "leaflet-searchbox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "lib/index.js",
   "module": "dist/leaflet.searchbox.esm.js",
@@ -31,8 +31,8 @@
   },
   "scripts": {
     "dist": "rollup -c",
-    "build":"parcel build -d build/examples examples/index.html",
-    "dev": "rollup -c -w | parcel -d build/examples examples/index.html",
+    "build": "parcel build -d build/examples examples/index.html",
+    "start": "parcel -d build/examples examples/index.html",
     "ghpage": "sh ghpage.sh",
     "test": "node test/test.js",
     "pretest": "yarn run build"
@@ -43,6 +43,9 @@
     "src"
   ],
   "dependencies": {
-    "leaflet-geosearch": "github:bung87/leaflet-geosearch#develop"
+    "core-js": "^3.4.1",
+    "leaflet-geosearch": "github:bung87/leaflet-geosearch#develop",
+    "lodash.template": "^4.5.0",
+    "regenerator-runtime": "^0.13.3"
   }
 }
