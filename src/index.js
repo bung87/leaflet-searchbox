@@ -25,10 +25,25 @@ function generateHtmlContent(menuItems) {
     return content;
 }
 
+function resultItemClickCallback(e) {
+    e.preventDefault();
+    // lat lng
+    var location = L.latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+    this._map.panTo(location);
+    this._map.fireEvent('geosearch/showlocation', {
+        location: {
+            latlng: location,
+            ...e.target.dataset
+        }
+    });
+    this._hideSearchResult();
+}
+
 L.Control.SearchBox = L.Control.extend({
     options: {
         position: 'topleft',
-        provider:new OpenStreetMapProvider()
+        provider: new OpenStreetMapProvider(),
+        resultItemClickCallback:resultItemClickCallback
     },
     initialize: function (options) {
         L.Util.setOptions(this, options);
@@ -40,6 +55,9 @@ L.Control.SearchBox = L.Control.extend({
             this._sideBarMenuItems = options.sidebarMenuItems;
 
         }
+    },
+    _isSideEnabled(){
+        return this._sideBarHeaderTitle || this._sideBarMenuItems;
     },
     _createPanelContent: function (menuItems) {
         var container = L.DomUtil.create('div', 'leaflet-searchbox-panel-content');
@@ -61,18 +79,16 @@ L.Control.SearchBox = L.Control.extend({
         return container
     },
     _createControl: function () {
-        var headerTitle = this._sideBarHeaderTitle;
-        var menuItems = this._sideBarMenuItems;
-        var sideEnabled = headerTitle || menuItems;
-        var container = L.DomUtil.create('div',"leaflet-searchbox-control");
+        var sideEnabled = this._isSideEnabled()
+        var container = L.DomUtil.create('div', "leaflet-searchbox-control");
         container.innerHTML = `
                 <div  class="leaflet-searchbox-control-container leaflet-searchbox-control-shadow" >
                     ${sideEnabled ?
-                        `<div class="leaflet-searchbox-control-menu-container">
+                `<div class="leaflet-searchbox-control-menu-container">
                             <button aria-label="Menu" class="leaflet-searchbox-control-menu-button"></button> 
                             <span aria-hidden="true"  style="display:none">Menu</span> 
-                        </div>` : 
-                        ""}
+                        </div>` :
+                ""}
 						<input class="leaflet-searchbox-control-input" type="text"  />
 					<div class="leaflet-searchbox-control-search-container">
                         <button aria-label="search"  class="leaflet-searchbox-control-search-button"></button> 
@@ -119,12 +135,11 @@ L.Control.SearchBox = L.Control.extend({
         });
     },
     onAdd: function (map) {
-
         this.options.provider = new OpenStreetMapProvider();
-        var container = L.DomUtil.create('div',"leaflet-searchbox-control-wrapper");
+        var container = L.DomUtil.create('div', "leaflet-searchbox-control-wrapper");
         var headerTitle = this._sideBarHeaderTitle;
         var menuItems = this._sideBarMenuItems;
-        var sideEnabled = headerTitle && menuItems;
+        var sideEnabled = this._isSideEnabled()
         container.appendChild(this._createControl());
 
         if (sideEnabled)
@@ -151,43 +166,30 @@ L.Control.SearchBox = L.Control.extend({
             var value = this.getContainer().querySelector(".leaflet-searchbox-control-input").value;
             this._suggest(value);
         }, 300, {
-                'leading': true,
-                'trailing': false
-            }));
+            'leading': true,
+            'trailing': false
+        }));
 
         if (sideEnabled) {
-            bean.on(container, 'click', ".leaflet-searchbox-control-menu-button",  (e) => {
+            bean.on(container, 'click', ".leaflet-searchbox-control-menu-button", (e) => {
                 var panel = this.getContainer().querySelector('.leaflet-searchbox-panel');
                 panel.style.left = '0px';
-                
+
             });
-            bean.on(container, 'click', ".leaflet-searchbox-panel-close-button",  (e) => {
+            bean.on(container, 'click', ".leaflet-searchbox-panel-close-button", (e) => {
                 var panel = this.getContainer().querySelector('.leaflet-searchbox-panel');
                 panel.style.left = `-100%`;
             });
         }
 
-        bean.on(container, 'click', '.leaflet-searchbox-result-list-item a', (e) => {
-            e.preventDefault();
-            // lat lng
-            var location =  L.latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
-            map.panTo(location);
-            map.fireEvent('geosearch/showlocation', {
-                location:{
-                    latlng:location,
-                    ...e.target.dataset
-                }
-                
-              });
-            this._hideSearchResult();
-        })
+        bean.on(container, 'click', '.leaflet-searchbox-result-list-item a', this.options.resultItemClickCallback.bind(this))
 
         L.DomEvent.disableClickPropagation(container);
         return container;
     }
 
 });
-L.control.searchbox = function(options){
+L.control.searchbox = function (options) {
     return new L.Control.SearchBox(options)
 }
 export default L.Control.SearchBox
