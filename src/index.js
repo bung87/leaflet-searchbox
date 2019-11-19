@@ -2,7 +2,7 @@ import * as L from 'leaflet';
 import bean from 'bean';
 import { OpenStreetMapProvider } from 'leaflet-geosearch/src/providers';
 import debounce from 'lodash/debounce';
-
+const template = require('lodash.template');
 function generateHtmlContent(menuItems) {
     var content = '<ul class="leaflet-searchbox-panel-list">'
 
@@ -56,7 +56,11 @@ L.Control.SearchBox = L.Control.extend({
         position: 'topleft',
         provider: new OpenStreetMapProvider(),
         resultItemClickCallback:resultItemClickCallback,
-        suggest:suggest
+        suggest:suggest,
+        resultItemTemplate:`<a href="#" data-x="<%- item.x %>" 
+        data-y="<%- item.y %>" 
+        data-label="<%- item.label %>" 
+        data-class="<%- item.raw.class %>" data-type="<%- item.raw.type %>" data-display_name="<%-item.raw.display_name%>"><%- item.label %></a>`
     },
     initialize: function (options) {
         L.Util.setOptions(this, options);
@@ -113,15 +117,10 @@ L.Control.SearchBox = L.Control.extend({
         return container;
     },
     _genResultList: function (result) {
-        var content = '<ul class="leaflet-searchbox-result-list">'
-        for (var i = 0; i < result.length; i++) {
-            var item = result[i];
-            content += '<li class="leaflet-searchbox-result-list-item">';
-            content += `<a href="#" data-x="${item.x}" data-y="${item.y}" data-label="${item.label}" data-class="${item.raw.class}" data-type="${item.raw.type}" data-display_name="${item.raw.display_name}">${item.label}</a>`;
-            content += '</li>'
-        }
-        content += '</ul>'
-        this.getContainer().querySelector('.leaflet-searchbox-control-search-result').innerHTML = content
+        var list = `<ul class="leaflet-searchbox-result-list"><% result.forEach( function(item) { %>
+            <li class="leaflet-searchbox-result-list-item">${this.options.resultItemTemplate}</li>
+            <% }); %></ul>`;
+        this.getContainer().querySelector('.leaflet-searchbox-control-search-result').innerHTML = template(list)({result})
     },
     _showSearchResult: function () {
         this.getContainer().querySelector('.leaflet-searchbox-control-search-result').style.display = 'block';
@@ -135,18 +134,6 @@ L.Control.SearchBox = L.Control.extend({
     _clearSearchResult: function () {
         this.getContainer().querySelector('.leaflet-searchbox-control-search-result').innerHTML = '';
     },
-    // _suggest: function (query) {
-    //     let provider = this.options.provider;
-    //     provider.search({ query: query })
-    //         .then((r) => {
-    //             this._genResultList(r);
-    //             this._showSearchResult();
-    //         });
-
-    //     this._map.once('click', function a(ev) {
-    //         this._hideSearchResult();
-    //     });
-    // },
     onAdd: function (map) {
         this.options.provider = new OpenStreetMapProvider();
         var container = L.DomUtil.create('div', "leaflet-searchbox-control-wrapper");
