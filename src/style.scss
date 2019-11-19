@@ -192,6 +192,9 @@ textarea::-moz-focus-inner {
       font-size: 13px;
       padding-top: 10px;
       &-item {
+        .button,a{
+          vertical-align: middle;
+        }
         padding: 10px 20px 20px 20px;
 
         cursor: pointer;
@@ -200,7 +203,7 @@ textarea::-moz-focus-inner {
           height: 22px;
           display: inline-block;
           opacity: 0.5;
-
+          vertical-align: middle;
           margin-right: 25px;
         }
       }

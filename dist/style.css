@@ -169,11 +169,14 @@ textarea::-moz-focus-inner {
     .leaflet-searchbox-panel-list-item {
       padding: 10px 20px 20px 20px;
       cursor: pointer; }
+      .leaflet-searchbox-panel-list-item .button, .leaflet-searchbox-panel-list-item a {
+        vertical-align: middle; }
       .leaflet-searchbox-panel-list-item-icon {
         width: 22px;
         height: 22px;
         display: inline-block;
         opacity: 0.5;
+        vertical-align: middle;
         margin-right: 25px; }
   .leaflet-searchbox-panel .icon-folder {
     background-image: url(images/sprite.@2x.png);
