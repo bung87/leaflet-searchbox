@@ -30,10 +30,12 @@ textarea::-moz-focus-inner {
   border: 0; }
 
 .leaflet-control.leaflet-searchbox-control-wrapper {
+  pointer-events: none;
   margin-left: 0;
   margin-top: 0; }
 
 .leaflet-searchbox-control {
+  pointer-events: auto;
   position: absolute;
   left: 0px;
   margin: 16px;
@@ -127,6 +129,7 @@ textarea::-moz-focus-inner {
     overflow: hidden; }
 
 .leaflet-searchbox-panel {
+  pointer-events: auto;
   width: 300px;
   float: left;
   height: 550px;

@@ -1408,7 +1408,7 @@ function suggest(query) {
     this._showSearchResult();
   });
 
-  this._map.once('click', function a(ev) {
+  this._map.once('click', ev => {
     this._hideSearchResult();
   });
 }
