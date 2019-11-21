@@ -1406,7 +1406,7 @@
       container.innerHTML = `
         <div class="leaflet-searchbox-panel-header">
             <div class="leaflet-searchbox-panel-header-container">
-                <span class="leaflet-searchbox-panel-header-title">${headerTitle}</span>
+                <i class="leaflet-searchbox-home"></i><span class="leaflet-searchbox-panel-header-title">${headerTitle}</span>
                 <button aria-label="Menu" class="leaflet-searchbox-panel-close-button"></button>
             </div>
         </div>
@@ -1511,6 +1511,9 @@
         });
       }
 
+      bean.on(container, 'click', '.leaflet-searchbox-home', e => {
+        map.fireEvent('searchbox/homeclicked');
+      });
       bean.on(container, 'click', '.leaflet-searchbox-result-list-item a', this.options.resultItemClickCallback.bind(this));
       L.DomEvent.disableClickPropagation(container);
       return container;

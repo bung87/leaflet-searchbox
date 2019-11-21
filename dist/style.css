@@ -74,7 +74,7 @@ textarea::-moz-focus-inner {
       display: block;
       background-image: url(images/sprite.@2x.png);
       background-position: 0px 0px;
-      background-size: 72px 72px;
+      background-size: 96px 72px;
       height: 24px;
       width: 24px;
       opacity: 0.62; }
@@ -102,7 +102,7 @@ textarea::-moz-focus-inner {
       height: 24px;
       background-image: url(images/sprite.@2x.png);
       background-position: -24px 0px;
-      background-size: 72px 72px;
+      background-size: 96px 72px;
       opacity: 0.5; }
   .leaflet-searchbox-control-search-result {
     width: 100%;
@@ -114,6 +114,15 @@ textarea::-moz-focus-inner {
     z-index: -1;
     display: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 -1px 0px rgba(0, 0, 0, 0.02); }
+
+.leaflet-searchbox-home {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: bottom;
+  background-image: url(images/sprite.@2x.png);
+  background-position: 0px -24px;
+  background-size: 96px 72px; }
 
 .leaflet-searchbox-result-list-item {
   padding: 5px 10px;
@@ -154,8 +163,8 @@ textarea::-moz-focus-inner {
       color: #c3c3c3; }
   .leaflet-searchbox-panel-close-button {
     background-image: url(images/sprite.@2x.png);
-    background-position: 0px -24px;
-    background-size: 72px 72px;
+    background-position: -24px -24px;
+    background-size: 96px 72px;
     height: 24px;
     width: 24px;
     margin: 0 5px;
@@ -172,7 +181,8 @@ textarea::-moz-focus-inner {
     .leaflet-searchbox-panel-list-item {
       padding: 10px 20px 20px 20px;
       cursor: pointer; }
-      .leaflet-searchbox-panel-list-item .button, .leaflet-searchbox-panel-list-item a {
+      .leaflet-searchbox-panel-list-item .button,
+      .leaflet-searchbox-panel-list-item a {
         vertical-align: middle; }
       .leaflet-searchbox-panel-list-item-icon {
         width: 22px;
@@ -183,25 +193,25 @@ textarea::-moz-focus-inner {
         margin-right: 25px; }
   .leaflet-searchbox-panel .icon-folder {
     background-image: url(images/sprite.@2x.png);
-    background-position: -24px -24px;
-    background-size: 72px 72px; }
+    background-position: -48px 0px;
+    background-size: 96px 72px; }
   .leaflet-searchbox-panel .icon-cloudy {
     background-image: url(images/sprite.@2x.png);
-    background-position: -48px 0px;
-    background-size: 72px 72px; }
+    background-position: -48px -24px;
+    background-size: 96px 72px; }
   .leaflet-searchbox-panel .icon-potrait {
     background-image: url(images/sprite.@2x.png);
-    background-position: -48px -24px;
-    background-size: 72px 72px; }
+    background-position: 0px -48px;
+    background-size: 96px 72px; }
   .leaflet-searchbox-panel .icon-local-dining {
     background-image: url(images/sprite.@2x.png);
-    background-position: 0px -48px;
-    background-size: 72px 72px; }
+    background-position: -24px -48px;
+    background-size: 96px 72px; }
   .leaflet-searchbox-panel .icon-bike {
     background-image: url(images/sprite.@2x.png);
-    background-position: -24px -48px;
-    background-size: 72px 72px; }
+    background-position: -48px -48px;
+    background-size: 96px 72px; }
   .leaflet-searchbox-panel .icon-local-carwash {
     background-image: url(images/sprite.@2x.png);
-    background-position: -48px -48px;
-    background-size: 72px 72px; }
+    background-position: -72px 0px;
+    background-size: 96px 72px; }

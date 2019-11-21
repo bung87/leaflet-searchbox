@@ -1445,7 +1445,7 @@ Control.SearchBox = Control.extend({
   },
   _createPanel: function _createPanel(headerTitle, menuItems) {
     var container = DomUtil.create('div', 'leaflet-searchbox-panel leaflet-searchbox-control-shadow');
-    container.innerHTML = "\n        <div class=\"leaflet-searchbox-panel-header\">\n            <div class=\"leaflet-searchbox-panel-header-container\">\n                <span class=\"leaflet-searchbox-panel-header-title\">".concat(headerTitle, "</span>\n                <button aria-label=\"Menu\" class=\"leaflet-searchbox-panel-close-button\"></button>\n            </div>\n        </div>\n        ");
+    container.innerHTML = "\n        <div class=\"leaflet-searchbox-panel-header\">\n            <div class=\"leaflet-searchbox-panel-header-container\">\n                <i class=\"leaflet-searchbox-home\"></i><span class=\"leaflet-searchbox-panel-header-title\">".concat(headerTitle, "</span>\n                <button aria-label=\"Menu\" class=\"leaflet-searchbox-panel-close-button\"></button>\n            </div>\n        </div>\n        ");
     container.appendChild(this._createPanelContent(menuItems));
     return container;
   },
@@ -1531,6 +1531,9 @@ Control.SearchBox = Control.extend({
       });
     }
 
+    bean.on(container, 'click', '.leaflet-searchbox-home', e => {
+      map.fireEvent('searchbox/homeclicked');
+    });
     bean.on(container, 'click', '.leaflet-searchbox-result-list-item a', this.options.resultItemClickCallback.bind(this));
     DomEvent.disableClickPropagation(container);
     return container;
