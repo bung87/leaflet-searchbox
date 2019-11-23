@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('leaflet')) :
-  typeof define === 'function' && define.amd ? define(['leaflet'], factory) :
-  (factory(global.L));
-}(this, (function (L) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('leaflet'), require('leaflet-geosearch')) :
+  typeof define === 'function' && define.amd ? define(['leaflet', 'leaflet-geosearch'], factory) :
+  (factory(global.L,global.leafletGeosearch));
+}(this, (function (L,leafletGeosearch) { 'use strict';
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -753,92 +753,6 @@
   });
   });
 
-  class Provider {
-    constructor(options = {}) {
-      this.options = options;
-    }
-
-    getParamString(params) {
-      return Object.keys(params).map(key =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`,
-      ).join('&');
-    }
-
-    async search({ query }) {
-      // eslint-disable-next-line no-bitwise
-      const protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-      const url = this.endpoint({ query, protocol });
-
-      const request = await fetch(url);
-      const json = await request.json();
-      return this.parse({ data: json });
-    }
-  }
-
-  /* eslint-disable import/prefer-default-export */
-
-  class Provider$4 extends Provider {
-    endpoint({ query } = {}) {
-      const { params } = this.options;
-
-      const paramString = this.getParamString({
-        ...params,
-        format: 'json',
-        q: query,
-      });
-
-      return `https://nominatim.openstreetmap.org/search?${paramString}`;
-    }
-
-    endpointReverse({ data } = {}) {
-      const { params } = this.options;
-
-      const paramString = this.getParamString({
-        ...params,
-        format: 'json',
-        // eslint-disable-next-line camelcase
-        osm_id: data.raw.osm_id,
-        // eslint-disable-next-line camelcase
-        osm_type: this.translateOsmType(data.raw.osm_type),
-      });
-
-      return `https://nominatim.openstreetmap.org/reverse?${paramString}`;
-    }
-
-    parse({ data }) {
-      return data.map(r => ({
-        x: r.lon,
-        y: r.lat,
-        label: r.display_name,
-        bounds: [
-          [parseFloat(r.boundingbox[0]), parseFloat(r.boundingbox[2])], // s, w
-          [parseFloat(r.boundingbox[1]), parseFloat(r.boundingbox[3])], // n, e
-        ],
-        raw: r,
-      }));
-    }
-
-    async search({ query, data }) {
-      // eslint-disable-next-line no-bitwise
-      const protocol = ~location.protocol.indexOf('http') ? location.protocol : 'https:';
-
-      const url = data
-        ? this.endpointReverse({ data, protocol })
-        : this.endpoint({ query, protocol });
-
-      const request = await fetch(url);
-      const json = await request.json();
-      return this.parse({ data: data ? [json] : json });
-    }
-
-    translateOsmType(type) {
-      if (type === 'node') return 'N';
-      if (type === 'way') return 'W';
-      if (type === 'relation') return 'R';
-      return ''; // Unknown
-    }
-  }
-
   /**
    * Checks if `value` is the
    * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
@@ -1371,7 +1285,7 @@
   L.Control.SearchBox = L.Control.extend({
     options: {
       position: 'topleft',
-      provider: new Provider$4(),
+      provider: new leafletGeosearch.OpenStreetMapProvider(),
       resultItemClickCallback: resultItemClickCallback,
       suggest: suggest,
       resultItemTemplate: `<a href="#" data-x="<%- item.x %>" 
@@ -1467,7 +1381,7 @@
     },
 
     onAdd: function (map) {
-      this.options.provider = new Provider$4();
+      this.options.provider = new leafletGeosearch.OpenStreetMapProvider();
       var container = L.DomUtil.create('div', "leaflet-searchbox-control-wrapper");
       var headerTitle = this._sideBarHeaderTitle;
       var menuItems = this._sideBarMenuItems;

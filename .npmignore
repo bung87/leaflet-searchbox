@@ -1,0 +1,14 @@
+README.md
+jest.config.json
+jest.config.js
+jest.config.ts
+test/
+.rpt2_cache
+yarn.lock
+yarn-error.log
+rollup.config.js
+rollup.config.ts
+.vscode/
+.circleci/
+.yo-rc.json
+.travis.yml

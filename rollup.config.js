@@ -20,7 +20,7 @@ export default [
 			file: pkg.browser,
 			format: 'umd'
 		},
-		external: ['leaflet'],
+		external: ['leaflet',"leaflet-geosearch"],
 		plugins: [
 			json(),
 			postcss({
@@ -52,14 +52,14 @@ export default [
 	},
 	{
 		input: 'src/index.js',
-		external: ['leaflet'],
+		external: ['leaflet',"leaflet-geosearch"],
 		plugins: [
 			json(),
 			postcss({
 
 			}),
 			resolve(),
-			commonjs({ namedExports: { 'node_modules/bean/bean.js': ['bean'] } }),
+			commonjs({ namedExports: { 'node_modules/bean/bean.js': ['bean'] ,'leaflet-geosearch/lib/index.js':["OpenStreetMapProvider"]} }),
 			babel({
 				
 				exclude: "node_modules/**",
@@ -82,7 +82,7 @@ export default [
 	},
 	{
 		input: 'src/index.js',
-		external: ['leaflet'],
+		external: ['leaflet',"leaflet-geosearch"],
 		plugins: [
 			json(),
 			postcss({
@@ -90,7 +90,7 @@ export default [
 			}),
 			resolve(),
 			
-			commonjs({ namedExports: { 'node_modules/bean/bean.js': ['bean'] } }),
+			commonjs({ namedExports: { 'node_modules/bean/bean.js': ['bean'] ,'leaflet-geosearch/lib/index.js':["OpenStreetMapProvider"]} }),
 			
 			babel({
 				exclude: "node_modules/**",
