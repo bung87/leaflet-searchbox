@@ -1,5 +1,4 @@
-# leaflet-searchbox
-
+# leaflet-searchbox ![npm: version](https://flat.badgen.net/npm/v/leaflet-searchbox) ![David: dependencies](http://flat.badgen.net/david/dep/bung87/leaflet-searchbox)![npm: license](https://flat.badgen.net/npm/license/leaflet-searchbox)
 A google map style search box which includes a side panel slider control.
 
 depends on https://github.com/smeijer/leaflet-geosearch
