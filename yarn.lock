@@ -3799,9 +3799,10 @@ lcid@^2.0.0:
   dependencies:
     invert-kv "^2.0.0"
 
-"leaflet-geosearch@github:bung87/leaflet-geosearch#develop":
-  version "2.6.0"
-  resolved "https://codeload.github.com/bung87/leaflet-geosearch/tar.gz/7f9c44b3f74d6099f94620b4fdcb70e0b746fcd6"
+leaflet-geosearch@^2.7.0:
+  version "2.7.0"
+  resolved "http://r.cnpmjs.org/leaflet-geosearch/download/leaflet-geosearch-2.7.0.tgz#0f7b319486ea344b00639b84b338b4087bf6b839"
+  integrity sha1-D3sxlIbqNEsAY5uEszi0CHv2uDk=
   dependencies:
     lodash.debounce "^4.0.8"
     nodent-runtime "^3.0.4"

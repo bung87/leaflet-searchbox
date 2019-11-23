@@ -1,7 +1,7 @@
 {
   "name": "leaflet-searchbox",
   "version": "1.0.1",
-  "description": "",
+  "description": "A google map style search box which includes a side panel slider control.",
   "main": "lib/index.js",
   "module": "dist/leaflet.searchbox.esm.js",
   "browser": "dist/leaflet.searchbox.umd.js",
@@ -45,7 +45,7 @@
   ],
   "dependencies": {
     "core-js": "^3.4.1",
-    "leaflet-geosearch": "github:bung87/leaflet-geosearch#develop",
+    "leaflet-geosearch": "^2.7.0",
     "lodash.template": "^4.5.0",
     "regenerator-runtime": "^0.13.3"
   }

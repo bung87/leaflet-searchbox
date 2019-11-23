@@ -2,7 +2,7 @@ import * as L from 'leaflet';
 import bean from 'bean';
 import {
     OpenStreetMapProvider
-} from 'leaflet-geosearch/src/providers';
+} from 'leaflet-geosearch';
 import debounce from 'lodash/debounce';
 const template = require('lodash.template');
 
