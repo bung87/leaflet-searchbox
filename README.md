@@ -9,8 +9,8 @@ http://leaflet-searchbox.bungos.me/
 
 ## Snapshots
 <div style="max-width:600px;display:flex;flex-direction:row;justify-content: space-between;">
-<img src="./snapshots/snapshot1.jpeg" width="250" >
-<img src="./snapshots/snapshot2.jpeg" width="250" >
+<img src="./snapshots/snapshot1.jpg" width="250" >
+<img src="./snapshots/snapshot2.jpg" width="250" >
 </div>
 
 ## Code Example
