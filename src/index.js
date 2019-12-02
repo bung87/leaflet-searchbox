@@ -69,12 +69,12 @@ L.Control.SearchBox = L.Control.extend({
     },
     initialize: function(options) {
         L.Util.setOptions(this, options);
-        if (options.sidebarTitleText) {
-            this._sideBarHeaderTitle = options.sidebarTitleText;
+        if (this.options.sidebarTitleText) {
+            this._sideBarHeaderTitle = this.options.sidebarTitleText;
         }
 
-        if (options.sidebarMenuItems) {
-            this._sideBarMenuItems = options.sidebarMenuItems;
+        if (this.options.sidebarMenuItems) {
+            this._sideBarMenuItems = this.options.sidebarMenuItems;
 
         }
     },
@@ -104,7 +104,7 @@ L.Control.SearchBox = L.Control.extend({
         var sideEnabled = this._isSideEnabled()
         var container = L.DomUtil.create('div', "leaflet-searchbox-control");
         container.innerHTML = `
-                <div  class="leaflet-searchbox-control-container leaflet-searchbox-control-shadow" >
+                <div style="${sideEnabled ? '' : 'padding-left:16px;' }" class="leaflet-searchbox-control-container  leaflet-searchbox-control-shadow" >
                     ${sideEnabled ?
                 `<div class="leaflet-searchbox-control-menu-container">
                             <button aria-label="Menu" class="leaflet-searchbox-control-menu-button"></button> 
