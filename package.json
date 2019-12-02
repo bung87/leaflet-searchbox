@@ -23,7 +23,7 @@
     "leaflet": "^1.3.4",
     "sass": "^1.23.3",
     "parcel": "^1.12.4",
-    "postcss-sprites": "https://github.com/bung87/postcss-sprites/archive/v4.2.1a.tar.gz",
+    "postcss-sprites": "https://github.com/bung87/postcss-sprites/releases/download/v4.2.1e/postcss-sprites-4.2.1.tgz",
     "rollup": "^0.66.6",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",

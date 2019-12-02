@@ -5362,9 +5362,9 @@ postcss-selector-parser@^5.0.0-rc.4:
     indexes-of "^1.0.1"
     uniq "^1.0.1"
 
-"postcss-sprites@https://github.com/bung87/postcss-sprites/archive/v4.2.1a.tar.gz":
+"postcss-sprites@https://github.com/bung87/postcss-sprites/releases/download/v4.2.1e/postcss-sprites-4.2.1.tgz":
   version "4.2.1"
-  resolved "https://github.com/bung87/postcss-sprites/archive/v4.2.1a.tar.gz#2d9755295faeb2c186d3260ee8738bf2f6d31d10"
+  resolved "https://github.com/bung87/postcss-sprites/releases/download/v4.2.1e/postcss-sprites-4.2.1.tgz#b3af2192887e7270cc9d612735af0d9630b29dd7"
   dependencies:
     bluebird "^3.1.1"
     debug "^2.6.0"
