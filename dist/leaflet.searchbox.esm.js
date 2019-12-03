@@ -1,4 +1,4 @@
-import { latLng, Control, Util, DomUtil, DomEvent, control } from 'leaflet';
+import { Control, Util, DomUtil, DomEvent, control, latLng } from 'leaflet';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 function _defineProperty(obj, key, value) {
@@ -63,7 +63,7 @@ var bean = createCommonjsModule(function (module) {
   * MIT license
   */
 (function (name, context, definition) {
-  if (module.exports) module.exports = definition(name,context);
+  if ( module.exports) module.exports = definition(name,context);
   else context[name] = definition(name,context);
 })('bean', commonjsGlobal, function (name, context) {
   name    = name    || 'bean';
@@ -657,7 +657,7 @@ var bean = createCommonjsModule(function (module) {
           // delegated event
           originalFn = fn;
           args       = slice.call(arguments, 4);
-          fn         = delegate(selector, originalFn, selectorEngine);
+          fn         = delegate(selector, originalFn);
         } else {
           args       = slice.call(arguments, 3);
           fn         = originalFn = selector;
@@ -868,9 +868,9 @@ var now = function() {
 var now_1 = now;
 
 /** Built-in value references. */
-var Symbol$1 = _root.Symbol;
+var Symbol = _root.Symbol;
 
-var _Symbol = Symbol$1;
+var _Symbol = Symbol;
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -901,10 +901,11 @@ function getRawTag(value) {
 
   try {
     value[symToStringTag] = undefined;
+    var unmasked = true;
   } catch (e) {}
 
   var result = nativeObjectToString.call(value);
-  {
+  if (unmasked) {
     if (isOwn) {
       value[symToStringTag] = tag;
     } else {
@@ -1339,12 +1340,12 @@ Control.SearchBox = Control.extend({
   initialize: function initialize(options) {
     Util.setOptions(this, options);
 
-    if (options.sidebarTitleText) {
-      this._sideBarHeaderTitle = options.sidebarTitleText;
+    if (this.options.sidebarTitleText) {
+      this._sideBarHeaderTitle = this.options.sidebarTitleText;
     }
 
-    if (options.sidebarMenuItems) {
-      this._sideBarMenuItems = options.sidebarMenuItems;
+    if (this.options.sidebarMenuItems) {
+      this._sideBarMenuItems = this.options.sidebarMenuItems;
     }
   },
 
@@ -1368,7 +1369,7 @@ Control.SearchBox = Control.extend({
     var sideEnabled = this._isSideEnabled();
 
     var container = DomUtil.create('div', "leaflet-searchbox-control");
-    container.innerHTML = "\n                <div  class=\"leaflet-searchbox-control-container leaflet-searchbox-control-shadow\" >\n                    ".concat(sideEnabled ? "<div class=\"leaflet-searchbox-control-menu-container\">\n                            <button aria-label=\"Menu\" class=\"leaflet-searchbox-control-menu-button\"></button> \n                            <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                        </div>" : "", "\n\t\t\t\t\t\t<input class=\"leaflet-searchbox-control-input\" type=\"text\"  />\n\t\t\t\t\t<div class=\"leaflet-searchbox-control-search-container\">\n                        <button aria-label=\"search\"  class=\"leaflet-searchbox-control-search-button\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"leaflet-searchbox-control-search-result\"></div>\n                </div>\n                ");
+    container.innerHTML = "\n                <div style=\"".concat(sideEnabled ? '' : 'padding-left:16px;', "\" class=\"leaflet-searchbox-control-container  leaflet-searchbox-control-shadow\" >\n                    ").concat(sideEnabled ? "<div class=\"leaflet-searchbox-control-menu-container\">\n                            <button aria-label=\"Menu\" class=\"leaflet-searchbox-control-menu-button\"></button> \n                            <span aria-hidden=\"true\"  style=\"display:none\">Menu</span> \n                        </div>" : "", "\n\t\t\t\t\t\t<input class=\"leaflet-searchbox-control-input\" type=\"text\"  />\n\t\t\t\t\t<div class=\"leaflet-searchbox-control-search-container\">\n                        <button aria-label=\"search\"  class=\"leaflet-searchbox-control-search-button\"></button> \n                        <span aria-hidden=\"true\"  style=\"display:none;\">search</span>\n                    </div>\n                    <div class=\"leaflet-searchbox-control-search-result\"></div>\n                </div>\n                ");
     return container;
   },
   _genResultList: function _genResultList(result) {

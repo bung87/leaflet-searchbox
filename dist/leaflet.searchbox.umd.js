@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('leaflet'), require('leaflet-geosearch')) :
   typeof define === 'function' && define.amd ? define(['leaflet', 'leaflet-geosearch'], factory) :
-  (factory(global.L,global.leafletGeosearch));
-}(this, (function (L,leafletGeosearch) { 'use strict';
+  (global = global || self, factory(global.L, global.leafletGeosearch));
+}(this, (function (L, leafletGeosearch) { 'use strict';
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -17,7 +17,7 @@
     * MIT license
     */
   (function (name, context, definition) {
-    if (module.exports) module.exports = definition(name,context);
+    if ( module.exports) module.exports = definition(name,context);
     else context[name] = definition(name,context);
   })('bean', commonjsGlobal, function (name, context) {
     name    = name    || 'bean';
@@ -611,7 +611,7 @@
             // delegated event
             originalFn = fn;
             args       = slice.call(arguments, 4);
-            fn         = delegate(selector, originalFn, selectorEngine);
+            fn         = delegate(selector, originalFn);
           } else {
             args       = slice.call(arguments, 3);
             fn         = originalFn = selector;
@@ -854,10 +854,11 @@
 
     try {
       value[symToStringTag] = undefined;
+      var unmasked = true;
     } catch (e) {}
 
     var result = nativeObjectToString.call(value);
-    {
+    if (unmasked) {
       if (isOwn) {
         value[symToStringTag] = tag;
       } else {
@@ -1296,12 +1297,12 @@
     initialize: function (options) {
       L.Util.setOptions(this, options);
 
-      if (options.sidebarTitleText) {
-        this._sideBarHeaderTitle = options.sidebarTitleText;
+      if (this.options.sidebarTitleText) {
+        this._sideBarHeaderTitle = this.options.sidebarTitleText;
       }
 
-      if (options.sidebarMenuItems) {
-        this._sideBarMenuItems = options.sidebarMenuItems;
+      if (this.options.sidebarMenuItems) {
+        this._sideBarMenuItems = this.options.sidebarMenuItems;
       }
     },
 
@@ -1333,7 +1334,7 @@
 
       var container = L.DomUtil.create('div', "leaflet-searchbox-control");
       container.innerHTML = `
-                <div  class="leaflet-searchbox-control-container leaflet-searchbox-control-shadow" >
+                <div style="${sideEnabled ? '' : 'padding-left:16px;'}" class="leaflet-searchbox-control-container  leaflet-searchbox-control-shadow" >
                     ${sideEnabled ? `<div class="leaflet-searchbox-control-menu-container">
                             <button aria-label="Menu" class="leaflet-searchbox-control-menu-button"></button> 
                             <span aria-hidden="true"  style="display:none">Menu</span> 
