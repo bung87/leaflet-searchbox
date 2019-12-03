@@ -1,6 +1,6 @@
 {
   "name": "leaflet-searchbox",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A google map style search box which includes a side panel slider control.",
   "main": "lib/index.js",
   "module": "dist/leaflet.searchbox.esm.js",
