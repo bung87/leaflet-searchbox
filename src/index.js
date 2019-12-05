@@ -31,6 +31,12 @@ function resultItemClickCallback(e) {
     e.preventDefault();
     // lat lng
     var location = L.latLng([parseFloat(e.target.dataset.y), parseFloat(e.target.dataset.x)]);
+    this._map.fireEvent('geosearch/clicklocation', {
+        location: {
+            latlng: location,
+            ...e.target.dataset
+        }
+    });
     this._map.panTo(location);
     this._map.fireEvent('geosearch/showlocation', {
         location: {
